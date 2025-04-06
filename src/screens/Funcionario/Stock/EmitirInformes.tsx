@@ -22,7 +22,9 @@ export const EmitirInformes = (): JSX.Element => {
 
   // Data for the bottom navigation
   const navigationItems = [
-    { name: "Stock", icon: <MapPinIcon className="w-5 h-5 md:w-6 md:h-6" />, active: true },
+    { name: "Stock", 
+      icon: <MapPinIcon className="w-5 h-5 md:w-6 md:h-6" />,
+      active: true },
     {
       name: "Prescripciones",
       icon: <FileTextIcon className="w-5 h-5 md:w-6 md:h-6" />,
@@ -40,7 +42,7 @@ export const EmitirInformes = (): JSX.Element => {
       <div className="relative w-full max-w-md mx-auto bg-white min-h-screen">
         {/* Back button */}
         <ArrowLeftCircleIcon className="absolute w-8 h-8 md:w-[42px] md:h-[42px] top-4 left-4" />
-
+        
         {/* Title */}
         <div className="absolute w-full px-4 text-center top-[79px]">
           <div className="font-single-line-body-base font-[number:var(--single-line-body-base-font-weight)] text-black text-[length:var(--single-line-body-base-font-size)] tracking-[var(--single-line-body-base-letter-spacing)] leading-[var(--single-line-body-base-line-height)]">
