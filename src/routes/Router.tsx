@@ -2,6 +2,9 @@ import { createBrowserRouter } from "react-router-dom";
 import { Login } from "../screens/Login/Login";
 import { MenuFuncionario } from "../screens/Funcionario/Menu";
 import { MenuMedico } from "../screens/Medico/Menu";
+import { RevisarStock } from "../screens/Medico/RevisarStock";
+import { EmitirRecetas } from "../screens/Medico/EmitirRecetas";
+import { IngresarPrescripcion } from "../screens/Medico/IngresarPrescripcion";
 import { IngresarMedicamentos } from "../screens/Funcionario/Stock/IngresarMedicamentos";
 import { RegistrarEntrega } from "../screens/Funcionario/Stock/RegistrarEntrega";
 import { EmitirInformes } from "../screens/Funcionario/Stock/EmitirInformes";
@@ -23,4 +26,7 @@ export const Router = createBrowserRouter([
   { path: "/funcionario/prescripciones", element: <Prescripciones /> },
 
   { path: "/medico", element: <MenuMedico /> },
+  { path: "/medico/revisar-stock", element: <RevisarStock /> },
+  { path: "/medico/emitir-recetas", element: <EmitirRecetas /> },
+  { path: "/medico/ingresar-prescripcion", element: <IngresarPrescripcion /> },
 ]);
