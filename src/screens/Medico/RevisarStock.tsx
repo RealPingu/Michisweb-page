@@ -63,12 +63,12 @@ export const RevisarStock = (): JSX.Element => {
             <Button
               variant="ghost"
               className="absolute w-8 h-8 top-4 left-0 p-0"
-              onClick={() => navigate("/funcionario/stock")}
+              onClick={() => navigate("/medico")}
             >
               <ArrowLeftCircleIcon className="w-8 h-8" />
             </Button>
             <div className="text-center pt-14 pb-4">
-              <h1 className="text-xl font-semibold"> Revisar stock</h1>
+              <h1 className="text-xl font-semibold">Revisar stock</h1>
             </div>
             
             {/* Search bar */}

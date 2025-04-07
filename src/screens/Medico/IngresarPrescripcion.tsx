@@ -14,7 +14,7 @@ export const IngresarPrescripcion = (): JSX.Element => {
             <Button
               variant="ghost"
               className="absolute w-8 h-8 top-4 left-0 p-0"
-              onClick={() => navigate("/funcionario/stock")}
+              onClick={() => navigate("/medico")}
             >
               <ArrowLeftCircleIcon className="w-8 h-8" />
             </Button>
