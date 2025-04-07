@@ -11,8 +11,11 @@ import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { Separator } from "../../../components/ui/separator";
+import { useNavigate } from "react-router-dom";
 
 export const EmitirInformes = (): JSX.Element => {
+
+  const navigate = useNavigate();
   // Data for the medication card
   const medicationData = {
     name: "Nombre del medicamento",
@@ -39,7 +42,9 @@ export const EmitirInformes = (): JSX.Element => {
     <div className="flex justify-center w-full min-h-screen bg-white">
       <div className="relative w-full max-w-md mx-auto bg-white min-h-screen">
         {/* Back button */}
-        <ArrowLeftCircleIcon className="absolute w-8 h-8 md:w-[42px] md:h-[42px] top-4 left-4" />
+        <button onClick={() => navigate("/funcionario/stock")}>
+          <ArrowLeftCircleIcon className="absolute w-[34px] h-[33px] top-[17px] left-4 text-black" />
+        </button>
 
         {/* Title */}
         <div className="absolute w-full px-4 text-center top-[79px]">
@@ -97,7 +102,9 @@ export const EmitirInformes = (): JSX.Element => {
               </div>
             </div>
 
-            <Button className="w-full h-[46px] mt-auto bg-[#2c2c2c] text-neutral-100 rounded-lg font-single-line-body-base font-[number:var(--single-line-body-base-font-weight)] text-[length:var(--single-line-body-base-font-size)] tracking-[var(--single-line-body-base-letter-spacing)] leading-[var(--single-line-body-base-line-height)] [font-style:var(--single-line-body-base-font-style)]">
+            <Button 
+              className="w-full h-[46px] mt-auto bg-[#2c2c2c] text-neutral-100 rounded-lg font-single-line-body-base font-[number:var(--single-line-body-base-font-weight)] text-[length:var(--single-line-body-base-font-size)] tracking-[var(--single-line-body-base-letter-spacing)] leading-[var(--single-line-body-base-line-height)] [font-style:var(--single-line-body-base-font-style)]"
+              onClick={() => navigate("./informes")}>
               Revisar informe de stock
             </Button>
           </CardContent>
