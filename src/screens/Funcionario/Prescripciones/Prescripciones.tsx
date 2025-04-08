@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import { Clock, ChevronRight, ArrowLeftCircleIcon } from 'lucide-react';
+import { Clock, ChevronRight } from 'lucide-react';
 import BackButton from '../../../components/ui/returnButton';
 
 export const Prescripciones = () => {
