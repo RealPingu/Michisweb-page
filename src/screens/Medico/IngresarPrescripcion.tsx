@@ -2,6 +2,7 @@ import { ArrowLeftCircleIcon } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
+import { JSX } from "react";
 
 export const IngresarPrescripcion = (): JSX.Element => {
   const navigate = useNavigate();

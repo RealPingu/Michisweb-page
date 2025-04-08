@@ -1,6 +1,7 @@
 import { ArrowLeftCircleIcon } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { JSX } from "react";
 
 export const EmitirRecetas = (): JSX.Element => {
   const navigate = useNavigate();
