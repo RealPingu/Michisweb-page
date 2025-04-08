@@ -1,15 +1,5 @@
-<<<<<<< HEAD
-export const Login = () => {
-  return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Login</h1>
-      <p className="text-gray-700">En construcción</p>
-    </div>
-  );
-};
-=======
 import { UserCircleIcon } from "lucide-react";
-import React from "react";
+import { JSX } from "react";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
@@ -85,4 +75,3 @@ export const Login = (): JSX.Element => {
     </div>
   );
 };
->>>>>>> michael-branch

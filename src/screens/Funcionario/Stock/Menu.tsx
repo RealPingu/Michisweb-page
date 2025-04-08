@@ -1,19 +1,5 @@
-<<<<<<< HEAD
-import { Link } from "react-router-dom";
-
-export const MenuStock = () => {
-  return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Menú Stock</h1>
-      <nav className="flex gap-4 mb-6">
-        <Link to="/funcionario/stock" className="text-blue-600">Stock</Link>
-      </nav>
-    </div>
-  );
-};
-=======
 import { ArrowLeftCircleIcon } from "lucide-react";
-import React from "react";
+import { JSX } from "react";
 import { Button } from "../../../components/ui/button";
 import { Separator } from "../../../components/ui/separator";
 import { useNavigate } from "react-router-dom";
@@ -67,4 +53,3 @@ export const MenuStock = (): JSX.Element => {
     </div>
   );
 };
->>>>>>> michael-branch
