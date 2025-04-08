@@ -1,143 +1,128 @@
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
-import BackButton from "../../../components/ui/returnButton";
-
-interface MedicationField {
-    id: number;
-    medicamento: string;
-    cantidad: string;
-  }
+import { Clock, ChevronRight, Plus } from 'lucide-react';
+import BackButton from '../../../components/ui/returnButton';
 
 export const Reservas = () => {
+    interface Reservation {
+        id: number;
+        rut: string;
+        timeAgo: string;
+        medications: string[];
+        status: 'pending' | 'confirmed';
+      }
 
-    const [rut, setRut] = useState('');
-    const [nombre, setNombre] = useState('');
-    const [retiraEnFarmacia, setRetiraEnFarmacia] = useState(false);
-    const [medicationFields, setMedicationFields] = useState<MedicationField[]>([
-        { id: 1, medicamento: '', cantidad: '' }
-    ]);
-
-    const handleAddMedication = () => {
-        const newField = {
-        id: medicationFields.length + 1,
-        medicamento: '',
-        cantidad: ''
-        };
-        setMedicationFields([...medicationFields, newField]);
-    };
-
-    const handleMedicationChange = (id: number, field: 'medicamento' | 'cantidad', value: string) => {
-        setMedicationFields(medicationFields.map(item => 
-        item.id === id ? { ...item, [field]: value } : item
-        ));
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log({
-        rut,
-        nombre,
-        retiraEnFarmacia,
-        medicamentos: medicationFields
-        });
-    };
-
-    return (
-        <div className="min-h-screen bg-gray-50 p-4">
-          <div className="max-w-xl mx-auto bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center mb-6">
-              <BackButton to="/" />
-              <h1 className="text-xl font-semibold text-center flex-1">Reserva medicamentos</h1>
-            </div>
+      const [reservations, setReservations] = useState<Reservation[]>([
+        {
+          id: 1,
+          rut: '12.345.678-9',
+          timeAgo: '15 días',
+          medications: [
+            'Sertralina  30 comprimidos'
+          ],
+          status: 'pending'
+        },
+        {
+          id: 2,
+          rut: '9.876.543-2',
+          timeAgo: '3 días',
+          medications: [
+            'Omeprazol 20 mg 30 comprimidos'
+          ],
+          status: 'pending'
+        }
+      ]);
     
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="text-sm font-medium text-gray-700 mb-4">Reserva</div>
-              
-              <div className="space-y-3">
-                <div>
-                  <label htmlFor="rut" className="block text-sm font-medium text-gray-700">RUT</label>
-                  <input
-                    type="text"
-                    id="rut"
-                    value={rut}
-                    onChange={(e) => setRut(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-gray-50 p-2"
-                    placeholder="12.345.678-9"
-                  />
-                </div>
+      const handleConfirm = (id: number) => {
+        setReservations(prevReservations =>
+          prevReservations.map(reservation =>
+            reservation.id === id
+              ? { ...reservation, status: 'confirmed' }
+              : reservation
+          )
+        );
+      };
     
-                <div>
-                  <label htmlFor="nombre" className="block text-sm font-medium text-gray-700">Nombre</label>
-                  <input
-                    type="text"
-                    id="nombre"
-                    value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-gray-50 p-2"
-                    placeholder="Horst Von Brand"
-                  />
-                </div>
+      const handleAddReservation = () => {
+        window.location.href = '/funcionario/reservas/reservar';
+      };
     
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="retiraEnFarmacia"
-                    checked={retiraEnFarmacia}
-                    onChange={(e) => setRetiraEnFarmacia(e.target.checked)}
-                    className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="retiraEnFarmacia" className="ml-2 block text-sm text-gray-700">
-                    Retira en farmacia normal
-                  </label>
-                </div>
+      return (
+        <div className="min-h-screen bg-gray-50">
+          {/* Header */}
+          <header className="bg-white shadow-sm">
+            <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+              <div className="flex items-center">
+                <BackButton to="/funcionario"/>
+                <h1 className="ml-4 text-xl font-semibold text-gray-900">
+                  Reservas
+                </h1>
               </div>
+              <button
+                onClick={handleAddReservation}
+                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              >
+                <Plus className="w-5 h-5 mr-2" />
+                Agregar Reserva
+              </button>
+            </div>
+          </header>
     
-              <div className="space-y-4 mt-6">
-                {medicationFields.map((field) => (
-                  <div key={field.id} className="space-y-3">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Medicamento</label>
-                      <input
-                        type="text"
-                        value={field.medicamento}
-                        onChange={(e) => handleMedicationChange(field.id, 'medicamento', e.target.value)}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-gray-50 p-2"
-                        placeholder="Loratadina 10mg"
-                      />
+          {/* Main Content */}
+          <main className="max-w-3xl mx-auto px-4 py-6">
+            <div className="space-y-4">
+              {reservations.map((reservation) => (
+                <div
+                  key={reservation.id}
+                  className={`bg-white rounded-lg shadow-sm border border-gray-200 p-4 ${
+                    reservation.status === 'confirmed' ? 'opacity-50' : ''
+                  }`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center space-x-3">
+                      <Clock className="w-5 h-5 text-gray-400" />
+                      <span className="text-gray-500">{reservation.timeAgo}</span>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Cantidad</label>
-                      <input
-                        type="text"
-                        value={field.cantidad}
-                        onChange={(e) => handleMedicationChange(field.id, 'cantidad', e.target.value)}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-gray-50 p-2"
-                        placeholder="X"
-                      />
+                    <div className="text-right">
+                      <span className="text-gray-700 font-medium block">RUT: {reservation.rut}</span>
+                      <span className="text-gray-500 text-sm block">ID: {reservation.id}</span>
                     </div>
                   </div>
-                ))}
-              </div>
     
-              <div className='flex flex-col items-center'>
-              <button
-                type="button"
-                onClick={handleAddMedication}
-                className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-600 text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-              >
-                <Plus className="w-5 h-5" />
-              </button>
-              </div>
+                  <div className="mt-4 space-y-2">
+                    {reservation.medications.map((medication, index) => (
+                      <div key={index} className="text-gray-600 text-sm pl-8">
+                        - {medication}
+                      </div>
+                    ))}
+                  </div>
     
-              <button
-                type="submit"
+                  <div className="mt-4 flex items-center justify-between">
+                    <button className="text-blue-600 text-sm font-medium flex items-center hover:text-blue-700">
+                      Detalles
+                      <ChevronRight className="w-4 h-4 ml-1" />
+                    </button>
+                    {reservation.status === 'pending' ? (
+                      <button
+                        onClick={() => handleConfirm(reservation.id)}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
+                      >
+                        Confirmar
+                      </button>
+                    ) : (
+                      <span className="text-green-600 font-medium text-sm">
+                        ✓ Confirmado
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button
                 className="w-full bg-gray-900 text-white rounded-md py-3 px-4 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 mt-6"
               >
-                Registrar reserva
+                Generar informe de reservas
               </button>
-            </form>
-          </div>
+          </main>
         </div>
       );
-
 }
