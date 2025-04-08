@@ -10,6 +10,7 @@ import { RegistrarEntrega } from "../screens/Funcionario/Stock/RegistrarEntrega"
 import { EmitirInformes } from "../screens/Funcionario/Stock/EmitirInformes";
 import { Informes } from "../screens/Funcionario/Stock/Informes/Informes";
 import { BajaMedicamentos } from "../screens/Funcionario/Stock/BajaMedicamentos";
+import { BajaDetalle } from "../screens/Funcionario/Stock/BajaDetalle/BajaDetalle";
 import { Prescripciones } from "../screens/Funcionario/Prescripciones/Prescripciones";
 import { MenuStock } from "../screens/Funcionario/Stock/Menu";
 
@@ -23,6 +24,7 @@ export const Router = createBrowserRouter([
   { path: "/funcionario/stock/emitir-informes", element: <EmitirInformes /> },
   { path: "/funcionario/stock/emitir-informes/informes", element: <Informes /> },
   { path: "/funcionario/stock/baja-medicamentos", element: <BajaMedicamentos /> },
+  { path: "/funcionario/stock/baja-medicamentos/:id", element: <BajaDetalle /> },
   { path: "/funcionario/prescripciones", element: <Prescripciones /> },
 
   { path: "/medico", element: <MenuMedico /> },
