@@ -4,6 +4,7 @@ import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { useNavigate } from "react-router-dom";
+import { JSX } from "react";
 
 interface Medication {
   id: number;

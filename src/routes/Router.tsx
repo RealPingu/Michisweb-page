@@ -14,6 +14,8 @@ import { BajaDetalle } from "../screens/Funcionario/Stock/BajaDetalle/BajaDetall
 import { Prescripciones } from "../screens/Funcionario/Prescripciones/Prescripciones";
 import { MenuStock } from "../screens/Funcionario/Stock/Menu";
 
+import { Reserva } from "../screens/Funcionario/Prescripciones/Reserva/Reserva"
+
 export const Router = createBrowserRouter([
   { path: "/", element: <Login /> },
 
@@ -26,7 +28,7 @@ export const Router = createBrowserRouter([
   { path: "/funcionario/stock/baja-medicamentos", element: <BajaMedicamentos /> },
   { path: "/funcionario/stock/baja-medicamentos/:id", element: <BajaDetalle /> },
   { path: "/funcionario/prescripciones", element: <Prescripciones /> },
-
+  { path: "/funcionario/prescripciones/reserva", element: <Reserva /> },
   { path: "/medico", element: <MenuMedico /> },
   { path: "/medico/revisar-stock", element: <RevisarStock /> },
   { path: "/medico/emitir-recetas", element: <EmitirRecetas /> },
