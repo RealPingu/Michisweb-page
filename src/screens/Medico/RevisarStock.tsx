@@ -6,7 +6,6 @@ import { Input } from "../../components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { JSX } from "react";
 
-
 interface ActiveIngredient {
   id: number;
   name: string;
@@ -120,7 +119,7 @@ export const RevisarStock = (): JSX.Element => {
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-gray-100 border-t text-center text-sm text-gray-500 py-2 flex justify-around">
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-gray-100 border-t text-center text-sm text-gray-500 py-2 flex justify-around">
             <div>Stock</div>
             <div>Prescripciones</div>
             <div>Recetas</div>

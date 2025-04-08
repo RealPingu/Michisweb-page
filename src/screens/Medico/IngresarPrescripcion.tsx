@@ -21,13 +21,12 @@ export const IngresarPrescripcion = (): JSX.Element => {
             </Button>
             <div className="text-center pt-14 pb-4">
               <h1 className="text-xl font-semibold">Ingresar prescripción</h1>
-            </div>
-            
+            </div>   
           </div>
         </div>
 
         {/* Body */}
-        <div className="pt-36 px-4">
+        <div className="pt-36 px-4 pb-32">
             <div className="mb-6">
                 <h5 className="text-lg font-medium">Datos del paciente</h5>
                 <hr />
@@ -89,7 +88,7 @@ export const IngresarPrescripcion = (): JSX.Element => {
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-gray-100 border-t text-center text-sm text-gray-500 py-2 flex justify-around">
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-gray-100 border-t text-center text-sm text-gray-500 py-2 flex justify-around">
             <div>Stock</div>
             <div>Prescripciones</div>
             <div>Recetas</div>

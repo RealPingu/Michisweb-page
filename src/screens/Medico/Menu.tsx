@@ -11,9 +11,9 @@ export const MenuMedico = (): JSX.Element => {
 
   // Menu options data for mapping
   const menuOptions = [
-    { id: 1, label: "Revisar stock" },
-    { id: 2, label: "Ingresar prescripciones" },
-    { id: 3, label: "Emitir recetas" },
+    { id: 1, label: "Revisar stock", path: "./revisar-stock" },
+    { id: 2, label: "Ingresar prescripciones", path: "./ingresar-prescripcion" },
+    { id: 3, label: "Emitir recetas", path: "./emitir-recetas" },
   ];
 
   return (
@@ -37,6 +37,7 @@ export const MenuMedico = (): JSX.Element => {
           {menuOptions.map((option, index) => (
             <Button
               key={option.id}
+              onClick={() => navigate(option.path)}
               className="w-[266px] h-[45px] bg-[#2c2c2c] rounded-lg border border-solid text-neutral-100 font-single-line-body-base font-[number:var(--single-line-body-base-font-weight)] text-[length:var(--single-line-body-base-font-size)] tracking-[var(--single-line-body-base-letter-spacing)] leading-[var(--single-line-body-base-line-height)] [font-style:var(--single-line-body-base-font-style)]"
               style={{
                 position: "absolute",
