@@ -7,7 +7,7 @@ import { RegistrarEntrega } from "../screens/Funcionario/Stock/RegistrarEntrega"
 import { EmitirInformes } from "../screens/Funcionario/Stock/EmitirInformes";
 import { Informes } from "../screens/Funcionario/Stock/Informes/Informes";
 import { BajaMedicamentos } from "../screens/Funcionario/Stock/BajaMedicamentos";
-import { Prescripciones } from "../screens/Funcionario/Prescripciones/Prescripciones";
+import { PrescripcionesPendientes } from "../screens/Funcionario/Prescripciones/PrescripcionesPendientes";
 import { Reservas } from "../screens/Funcionario/Reserva/Reservas";
 import { Reservar } from "../screens/Funcionario/Reserva/Reservar"
 import { MenuStock } from "../screens/Funcionario/Stock/Menu";
@@ -22,7 +22,7 @@ export const Router = createBrowserRouter([
   { path: "/funcionario/stock/emitir-informes", element: <EmitirInformes /> },
   { path: "/funcionario/stock/emitir-informes/informes", element: <Informes /> },
   { path: "/funcionario/stock/baja-medicamentos", element: <BajaMedicamentos /> },
-  { path: "/funcionario/prescripciones", element: <Prescripciones /> },
+  { path: "/funcionario/prescripciones/pendientes", element: <PrescripcionesPendientes /> },
   { path: "/funcionario/reservas", element: <Reservas />},
   { path: "/funcionario/reservas/reservar", element: <Reservar /> },
 

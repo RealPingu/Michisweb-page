@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Clock, ChevronRight, X } from 'lucide-react';
 import BackButton from '../../../components/ui/returnButton';
 
-export const Prescripciones = () => {
+export const PrescripcionesPendientes = () => {
   interface Prescription {
     id: number;
     rut: string;
@@ -92,7 +92,7 @@ export const Prescripciones = () => {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center">
-          <BackButton to="/" />
+          <BackButton to="/funcionario/prescripciones" />
           <h1 className="ml-4 text-xl font-semibold text-gray-900">
             Entrega prescripciones
           </h1>
