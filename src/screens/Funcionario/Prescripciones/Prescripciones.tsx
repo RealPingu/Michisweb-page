@@ -28,7 +28,9 @@ export const Prescripciones = (): JSX.Element => {
         </div>
 
         {/* Review prescriptions button */}
-        <Button className="flex w-[307px] h-10 items-center justify-center gap-2 p-3 absolute top-[107px] left-[43px] bg-[#2c2c2c] rounded-lg overflow-hidden border border-solid">
+        <Button 
+        onClick={() => navigate("./pendientes")}
+        className="flex w-[307px] h-10 items-center justify-center gap-2 p-3 absolute top-[107px] left-[43px] bg-[#2c2c2c] rounded-lg overflow-hidden border border-solid">
           <span className="relative w-fit mt-[-1.00px] font-single-line-body-base font-[number:var(--single-line-body-base-font-weight)] text-white text-[length:var(--single-line-body-base-font-size)] tracking-[var(--single-line-body-base-letter-spacing)] leading-[var(--single-line-body-base-line-height)] whitespace-nowrap [font-style:var(--single-line-body-base-font-style)]">
             Revisar prescripciones pendientes
           </span>
@@ -36,7 +38,7 @@ export const Prescripciones = (): JSX.Element => {
 
         {/* Reservation card */}
         <Card
-          onClick={() => navigate("./reserva")}
+          onClick={() => navigate("./reservas")}
           className="w-[305px] h-[143px] absolute top-[239px] left-[45px] bg-[#2c2c2c] rounded-lg overflow-hidden border border-solid cursor-pointer hover:bg-[#3d3d3d] transition"
         >
           <CardContent className="flex items-center justify-center h-full p-3">

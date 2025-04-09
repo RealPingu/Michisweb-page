@@ -12,9 +12,10 @@ import { Informes } from "../screens/Funcionario/Stock/Informes/Informes";
 import { BajaMedicamentos } from "../screens/Funcionario/Stock/BajaMedicamentos";
 import { BajaDetalle } from "../screens/Funcionario/Stock/BajaDetalle/BajaDetalle";
 import { Prescripciones } from "../screens/Funcionario/Prescripciones/Prescripciones";
+import { PrescripcionesPendientes } from "../screens/Funcionario/Prescripciones/PrescripcionesPendientes";
+import { Reservas } from "../screens/Funcionario/Reserva/Reservas";
+import { Reservar } from "../screens/Funcionario/Reserva/Reservar"
 import { MenuStock } from "../screens/Funcionario/Stock/Menu";
-
-import { Reserva } from "../screens/Funcionario/Prescripciones/Reserva/Reserva"
 
 export const Router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -28,7 +29,10 @@ export const Router = createBrowserRouter([
   { path: "/funcionario/stock/baja-medicamentos", element: <BajaMedicamentos /> },
   { path: "/funcionario/stock/baja-medicamentos/:id", element: <BajaDetalle /> },
   { path: "/funcionario/prescripciones", element: <Prescripciones /> },
-  { path: "/funcionario/prescripciones/reserva", element: <Reserva /> },
+  { path: "/funcionario/prescripciones/pendientes", element: <PrescripcionesPendientes /> },
+  { path: "/funcionario/prescripciones/reservas", element: <Reservas /> },
+  { path: "/funcionario/prescripciones/reservas/reservar", element: <Reservar /> },
+
   { path: "/medico", element: <MenuMedico /> },
   { path: "/medico/revisar-stock", element: <RevisarStock /> },
   { path: "/medico/emitir-recetas", element: <EmitirRecetas /> },
