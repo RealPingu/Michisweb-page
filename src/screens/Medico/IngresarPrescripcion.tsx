@@ -1,14 +1,19 @@
-import { ArrowLeftCircleIcon } from "lucide-react";
+import { ArrowLeftCircleIcon, Package, FileText, ClipboardList, Plus } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Plus } from "lucide-react";
-import { JSX } from "react";
+import { useState, JSX } from "react";
 
 export const IngresarPrescripcion = (): JSX.Element => {
   const navigate = useNavigate();
+  const [medicamentos, setMedicamentos] = useState([{ nombre: "", duracion: "", frecuencia: "" }]);
+  const agregarMedicamento = () => {setMedicamentos([...medicamentos, { nombre: "", duracion: "", frecuencia: "" }]);};
+  const handleGuardarPrescripcion = () => {
+    alert("Prescripción emitida correctamente."); //Falta verificar que se pongan datos
+  };
   return (
     <div className="flex justify-center w-full min-h-screen bg-white">
       <div className="relative w-full max-w-md mx-auto bg-white min-h-screen">
+
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 z-10 bg-white px-4 pt-4 pb-2">
           <div className="relative max-w-md mx-auto">
@@ -27,72 +32,85 @@ export const IngresarPrescripcion = (): JSX.Element => {
 
         {/* Body */}
         <div className="pt-36 px-4 pb-32">
-            <div className="mb-6">
-                <h5 className="text-lg font-medium">Datos del paciente</h5>
-                <hr />
-            </div>
-            <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700">Nombre</label>
-                <input
+          <div className="mb-6">
+            <h5 className="text-lg font-medium">Datos del paciente</h5>
+            <hr />
+          </div>
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700">Nombre</label>
+            <input
+              type="text"
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Ingresa nombre"
+            />
+          </div>
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700">RUT</label>
+            <input
+              type="text"
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Ingrese RUT"
+            />
+          </div>
+          <div className="mb-6">
+            <h5 className="text-lg font-medium">Prescripción</h5>
+            <hr />
+          </div>
+
+          {/* Medicamentos dinámicos */}
+          {medicamentos.map((_, index) => (
+            <div key={index} className="mb-6 border border-gray-200 rounded-md p-4">
+              <label className="block text-sm font-medium text-gray-700">Medicamento #{index + 1}</label>
+              <input
                 type="text"
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Ingresa nombre"
-                />
-            </div>
-            <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700">RUT</label>
-                <input
-                type="text"
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Ingrese RUT"
-                />
-            </div>
-            <div className="mb-6">
-                <h5 className="text-lg font-medium">Prescripción</h5>
-                <hr />
-            </div>
-            <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700">Medicamento</label>
-                <input
-                type="text"
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 mb-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Ingrese medicamento"
-                />
-            </div>
-            <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700">Duración</label>
-                <input
+              />
+              <label className="block text-sm font-medium text-gray-700">Duración</label>
+              <input
                 type="text"
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 mb-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Ingrese duración"
-                />
-            </div>
-            <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700">Frecuencia</label>
-                <input
+              />
+              <label className="block text-sm font-medium text-gray-700">Frecuencia</label>
+              <input
                 type="text"
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Ingrese frecuencia"
-                />
+              />
             </div>
-            <div className="flex items-center my-6">
-                <div className="flex-grow border-t border-gray-300" />
-                <Button variant="secondary" size="icon" className="mx-4">
-                    <Plus />
-                </Button>
-                <div className="flex-grow border-t border-gray-300" />
-            </div>
-            <div className="text-center mt-4">
-                <Button size="lg">Guardar prescripción</Button>
-            </div>
+          ))}
+
+          {/* Botón para agregar más medicamentos */}
+          <div className="flex items-center my-6">
+            <div className="flex-grow border-t border-gray-300" />
+            <Button variant="secondary" size="icon" className="mx-4" onClick={agregarMedicamento}>
+              <Plus />
+            </Button>
+            <div className="flex-grow border-t border-gray-300" />
+          </div>
+
+          <div className="text-center mt-4">
+            <Button size="lg" onClick={handleGuardarPrescripcion}>Guardar prescripción</Button>
+          </div>
         </div>
 
         {/* Footer */}
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-gray-100 border-t text-center text-sm text-gray-500 py-2 flex justify-around">
-            <div>Stock</div>
-            <div>Prescripciones</div>
-            <div>Recetas</div>
+          <div className="flex flex-col items-center hover:text-black cursor-pointer" onClick={() => navigate("/medico/revisar-stock")}>
+            <Package className="w-5 h-5" />
+            <span>Stock</span>
+          </div>
+          <div className="flex flex-col items-center hover:text-black cursor-pointer" onClick={() => navigate("/medico/ingresar-prescripcion")}>
+            <ClipboardList className="w-5 h-5" />
+            <span>Prescripciones</span>
+          </div>
+          <div className="flex flex-col items-center hover:text-black cursor-pointer" onClick={() => navigate("/medico/emitir-recetas")}>
+            <FileText className="w-5 h-5" />
+            <span>Recetas</span>
+          </div>
         </div>
+        
       </div>
     </div>
   );

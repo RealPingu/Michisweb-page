@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeftCircleIcon, SearchIcon, MicIcon } from "lucide-react";
+import { ArrowLeftCircleIcon, SearchIcon, MicIcon, Package, FileText, ClipboardList } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
@@ -17,8 +17,6 @@ interface ActiveIngredient {
 export const RevisarStock = (): JSX.Element => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-
-  // Sample data - replace with your actual data source
   const activeIngredients: ActiveIngredient[] = [
     { 
       id: 1, 
@@ -49,15 +47,14 @@ export const RevisarStock = (): JSX.Element => {
       totalStock: 320
     },
   ];
-
   const filteredIngredients = activeIngredients.filter(ingredient => 
     ingredient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     ingredient.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
   return (
     <div className="flex justify-center w-full min-h-screen bg-white">
       <div className="relative w-full max-w-md mx-auto bg-white min-h-screen">
+
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 z-10 bg-white px-4 pt-4 pb-2">
           <div className="relative max-w-md mx-auto">
@@ -120,10 +117,20 @@ export const RevisarStock = (): JSX.Element => {
 
         {/* Footer */}
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-gray-100 border-t text-center text-sm text-gray-500 py-2 flex justify-around">
-            <div>Stock</div>
-            <div>Prescripciones</div>
-            <div>Recetas</div>
+          <div className="flex flex-col items-center hover:text-black cursor-pointer" onClick={() => navigate("/medico/revisar-stock")}>
+            <Package className="w-5 h-5" />
+            <span>Stock</span>
+          </div>
+          <div className="flex flex-col items-center hover:text-black cursor-pointer" onClick={() => navigate("/medico/ingresar-prescripcion")}>
+            <ClipboardList className="w-5 h-5" />
+            <span>Prescripciones</span>
+          </div>
+          <div className="flex flex-col items-center hover:text-black cursor-pointer" onClick={() => navigate("/medico/emitir-recetas")}>
+            <FileText className="w-5 h-5" />
+            <span>Recetas</span>
+          </div>
         </div>
+
       </div>
     </div>
   );
