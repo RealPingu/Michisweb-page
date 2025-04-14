@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { Clock, ChevronRight, X } from 'lucide-react';
+import { Button } from '../../../components/ui/button';
+import { Card, CardContent } from '../../../components/ui/card';
+import { Input } from '../../../components/ui/input';
 import BackButton from '../../../components/ui/returnButton';
 
 export const PrescripcionesPendientes = () => {
@@ -89,131 +92,115 @@ export const PrescripcionesPendientes = () => {
   const filteredPrescriptions = prescriptions.filter(p => p.status === activeTab);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center">
-          <BackButton to="/funcionario/prescripciones" />
-          <h1 className="ml-4 text-xl font-semibold text-gray-900">
-            Entrega prescripciones
-          </h1>
-        </div>
-      </header>
+    <div className="flex justify-center w-full min-h-screen bg-white">
+      <div className="relative w-full max-w-md mx-auto bg-white min-h-screen">
 
-      {/* Tabs */}
-      <div className="max-w-3xl mx-auto px-4 pt-6 flex space-x-4">
-        <button
-          onClick={() => setActiveTab('pending')}
-          className={`px-4 py-2 rounded-md text-sm font-medium ${
-            activeTab === 'pending' ? 'bg-blue-600 text-white' : 'bg-white border border-gray-300 text-gray-700'
-          }`}
-        >
-          Por entregar
-        </button>
-        <button
-          onClick={() => setActiveTab('delivered')}
-          className={`px-4 py-2 rounded-md text-sm font-medium ${
-            activeTab === 'delivered' ? 'bg-blue-600 text-white' : 'bg-white border border-gray-300 text-gray-700'
-          }`}
-        >
-          Entregadas
-        </button>
-      </div>
+        {/* Encabezado */}
+        <div className="fixed top-0 left-0 right-0 z-10 bg-white px-4 pt-4 pb-2">
+          <div className="relative max-w-md mx-auto">
+            <BackButton to="/funcionario/prescripciones" />
+            <div className="text-center pt-14 pb-4">
+              <h1 className="text-xl font-semibold">Entrega prescripciones</h1>
+            </div>
 
-      {/* Lista de prescripciones */}
-      <main className="max-w-3xl mx-auto px-4 py-6">
-        {filteredPrescriptions.length === 0 ? (
-          <p className="text-gray-500 text-center">No hay prescripciones {activeTab === 'pending' ? 'pendientes' : 'entregadas'}.</p>
-        ) : (
-          <div className="space-y-4">
-            {filteredPrescriptions.map((prescription) => (
-              <div
-                key={prescription.id}
-                className="bg-white rounded-lg shadow-sm border border-gray-200 p-4"
+            {/* Pestañas */}
+            <div className="flex space-x-4 justify-center">
+              <Button
+                variant={activeTab === 'pending' ? 'default' : 'outline'}
+                onClick={() => setActiveTab('pending')}
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-3">
-                    <Clock className="w-5 h-5 text-gray-400" />
-                    <span className="text-gray-500">{prescription.timeAgo}</span>
-                  </div>
-                  <span className="text-gray-700 font-bold">{prescription.rut}</span>
-                </div>
-
-                <div className="mt-4 space-y-2">
-                  {prescription.medications.map((medication, index) => (
-                    <div key={index} className="text-gray-600 text-sm pl-8">
-                      - {medication}
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <button className="text-blue-600 text-sm font-medium flex items-center hover:text-blue-700">
-                    Detalles
-                    <ChevronRight className="w-4 h-4 ml-1" />
-                  </button>
-
-                  {prescription.status === 'pending' ? (
-                    <button
-                      onClick={() => openModal(prescription.id)}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
-                    >
-                      Entregar
-                    </button>
-                  ) : (
-                    <div className="text-green-600 text-sm">
-                      <div>✓ Entregado</div>
-                      <div className="text-gray-600">
-                        Por: {prescription.entregadoPorNombre} ({prescription.entregadoPorRUT})
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </main>
-
-      {/* Modal */}
-      {modalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
-            <button
-              onClick={closeModal}
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            <h2 className="text-lg font-semibold mb-4">Confirmar entrega</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Nombre</label>
-                <input
-                  type="text"
-                  value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">RUT</label>
-                <input
-                  type="text"
-                  value={rutInput}
-                  onChange={(e) => setRutInput(e.target.value)}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-sm"
-                />
-              </div>
-              <button
-                onClick={handleDeliveryConfirmed}
-                className="w-full bg-blue-600 text-white py-2 rounded-md text-sm font-medium hover:bg-blue-700"
+                Por entregar
+              </Button>
+              <Button
+                variant={activeTab === 'delivered' ? 'default' : 'outline'}
+                onClick={() => setActiveTab('delivered')}
               >
-                Entrega realizada
-              </button>
+                Entregadas
+              </Button>
             </div>
           </div>
         </div>
-      )}
+
+        {/* Lista de prescripciones */}
+        <div className="pt-44 pb-4 px-4">
+          {filteredPrescriptions.length === 0 ? (
+            <p className="text-gray-500 text-center">
+              No hay prescripciones {activeTab === 'pending' ? 'pendientes' : 'entregadas'}.
+            </p>
+          ) : (
+            <div className="space-y-4 mt-4">
+              {filteredPrescriptions.map((prescription) => (
+                <Card key={prescription.id}>
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center space-x-3">
+                        <Clock className="w-5 h-5 text-gray-400" />
+                        <span className="text-gray-500">{prescription.timeAgo}</span>
+                      </div>
+                      <span className="text-gray-700 font-bold">{prescription.rut}</span>
+                    </div>
+
+                    <div className="mt-4 space-y-2">
+                      {prescription.medications.map((medication, index) => (
+                        <div key={index} className="text-gray-600 text-sm pl-8">
+                          - {medication}
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                      <button className="text-blue-600 text-sm font-medium flex items-center hover:text-blue-700">
+                        Detalles
+                        <ChevronRight className="w-4 h-4 ml-1" />
+                      </button>
+
+                      {prescription.status === 'pending' ? (
+                        <Button
+                          onClick={() => openModal(prescription.id)}
+                          className="text-white"
+                        >
+                          Entregar
+                        </Button>
+                      ) : (
+                        <div className="text-sm text-gray-500">
+                          Entregado a {prescription.entregadoPorNombre} ({prescription.entregadoPorRUT})
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Modal de confirmación */}
+        {modalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center px-4">
+            <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm relative">
+              <button className="absolute top-2 right-2 text-gray-400 hover:text-gray-600" onClick={closeModal}>
+                <X className="w-5 h-5" />
+              </button>
+              <h2 className="text-lg font-semibold mb-4">Confirmar entrega</h2>
+              <div className="space-y-3">
+                <Input
+                  placeholder="Nombre de quien retira"
+                  value={nombre}
+                  onChange={e => setNombre(e.target.value)}
+                />
+                <Input
+                  placeholder="RUT de quien retira"
+                  value={rutInput}
+                  onChange={e => setRutInput(e.target.value)}
+                />
+                <Button className="w-full" onClick={handleDeliveryConfirmed}>
+                  Confirmar
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

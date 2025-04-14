@@ -1,128 +1,105 @@
 import { useState } from 'react';
 import { Clock, ChevronRight, Plus } from 'lucide-react';
 import BackButton from '../../../components/ui/returnButton';
+import { Card, CardContent } from '../../../components/ui/card';
+import { Button } from '../../../components/ui/button';
 
 export const Reservas = () => {
-    interface Reservation {
-        id: number;
-        rut: string;
-        timeAgo: string;
-        medications: string[];
-        status: 'pending' | 'confirmed';
-      }
+  interface Reservation {
+    id: number;
+    rut: string;
+    timeAgo: string;
+    medications: string[];
+    status: 'pending' | 'confirmed';
+  }
 
-      const [reservations, setReservations] = useState<Reservation[]>([
-        {
-          id: 1,
-          rut: '12.345.678-9',
-          timeAgo: '15 días',
-          medications: [
-            'Sertralina  30 comprimidos'
-          ],
-          status: 'pending'
-        },
-        {
-          id: 2,
-          rut: '9.876.543-2',
-          timeAgo: '3 días',
-          medications: [
-            'Omeprazol 20 mg 30 comprimidos'
-          ],
-          status: 'pending'
-        }
-      ]);
-    
-      const handleConfirm = (id: number) => {
-        setReservations(prevReservations =>
-          prevReservations.map(reservation =>
-            reservation.id === id
-              ? { ...reservation, status: 'confirmed' }
-              : reservation
-          )
-        );
-      };
-    
-      const handleAddReservation = () => {
-        window.location.href = '/funcionario/prescripciones/reservas/reservar';
-      };
-    
-      return (
-        <div className="min-h-screen bg-gray-50">
-          {/* Header */}
-          <header className="bg-white shadow-sm">
-            <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <BackButton to="/funcionario"/>
-                <h1 className="ml-4 text-xl font-semibold text-gray-900">
-                  Reservas
-                </h1>
-              </div>
-              <button
-                onClick={handleAddReservation}
-                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-              >
-                <Plus className="w-5 h-5 mr-2" />
-                Agregar Reserva
-              </button>
+  const [reservations, setReservations] = useState<Reservation[]>([
+    {
+      id: 1,
+      rut: '12.345.678-9',
+      timeAgo: '15 días',
+      medications: ['Sertralina  30 comprimidos'],
+      status: 'pending',
+    },
+    {
+      id: 2,
+      rut: '9.876.543-2',
+      timeAgo: '3 días',
+      medications: ['Omeprazol 20 mg 30 comprimidos'],
+      status: 'pending',
+    },
+  ]);
+
+  const handleConfirm = (id: number) => {
+    setReservations((prev) =>
+      prev.map((r) =>
+        r.id === id ? { ...r, status: 'confirmed' } : r
+      )
+    );
+  };
+
+  const handleAddReservation = () => {
+    window.location.href = '/funcionario/prescripciones/reservas/reservar';
+  };
+
+  return (
+    <div className="flex justify-center w-full min-h-screen bg-white">
+    <div className="relative w-full max-w-md mx-auto bg-white min-h-screen">
+
+        <div className="fixed top-0 left-0 right-0 z-10 bg-white px-4 pt-4 pb-2">
+          <div className="relative max-w-md mx-auto">
+            <BackButton to="/funcionario/prescripciones" />
+            <div className="text-center pt-14 pb-4">
+              <h1 className="text-xl font-semibold">Reservas</h1>
             </div>
-          </header>
-    
-          {/* Main Content */}
-          <main className="max-w-3xl mx-auto px-4 py-6">
-            <div className="space-y-4">
-              {reservations.map((reservation) => (
-                <div
-                  key={reservation.id}
-                  className={`bg-white rounded-lg shadow-sm border border-gray-200 p-4 ${
-                    reservation.status === 'confirmed' ? 'opacity-50' : ''
-                  }`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center space-x-3">
-                      <Clock className="w-5 h-5 text-gray-400" />
-                      <span className="text-gray-500">{reservation.timeAgo}</span>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-gray-700 font-medium block">RUT: {reservation.rut}</span>
-                      <span className="text-gray-500 text-sm block">ID: {reservation.id}</span>
-                    </div>
-                  </div>
-    
-                  <div className="mt-4 space-y-2">
-                    {reservation.medications.map((medication, index) => (
-                      <div key={index} className="text-gray-600 text-sm pl-8">
-                        - {medication}
-                      </div>
-                    ))}
-                  </div>
-    
-                  <div className="mt-4 flex items-center justify-between">
-                    <button className="text-blue-600 text-sm font-medium flex items-center hover:text-blue-700">
-                      Detalles
-                      <ChevronRight className="w-4 h-4 ml-1" />
-                    </button>
-                    {reservation.status === 'pending' ? (
-                      <button
-                        onClick={() => handleConfirm(reservation.id)}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
-                      >
-                        Confirmar
-                      </button>
-                    ) : (
-                      <span className="text-green-600 font-medium text-sm">
-                        ✓ Confirmado
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <button
-                className="w-full bg-gray-900 text-white rounded-md py-3 px-4 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 mt-6"
-              >
-                Generar informe de reservas
-              </button>
-          </main>
+          </div>
         </div>
-      );
-}
+
+      {/* Listado de reservas */}
+      <div className="max-w-4xl mx-auto pt-44">
+        {reservations.map((r) => (
+          <Card key={r.id} className={r.status === 'confirmed' ? 'opacity-50' : ''}>
+            <CardContent className="p-4 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Clock className="w-4 h-4" />
+                  <span>{r.timeAgo}</span>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-medium text-foreground">RUT: {r.rut}</p>
+                  <p className="text-xs text-muted-foreground">ID: {r.id}</p>
+                </div>
+              </div>
+
+              <div className="space-y-1 pl-6">
+                {r.medications.map((med, idx) => (
+                  <p key={idx} className="text-sm text-muted-foreground">• {med}</p>
+                ))}
+              </div>
+
+              <div className="flex justify-between items-center pt-2">
+                <Button variant="link" className="text-sm px-0 h-auto">
+                  Detalles <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+                {r.status === 'pending' ? (
+                  <Button onClick={() => handleConfirm(r.id)} size="sm">
+                    Confirmar
+                  </Button>
+                ) : (
+                  <span className="text-sm text-green-600 font-medium">✓ Confirmado</span>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+        <Button className="w-full mt-6" variant="default" onClick={handleAddReservation}>
+          Agregar Reserva
+        </Button>
+        <Button className="w-full mt-6" variant="default">
+          Generar informe de reservas
+        </Button>
+      </div>
+    </div>
+    </div>
+  );
+};
