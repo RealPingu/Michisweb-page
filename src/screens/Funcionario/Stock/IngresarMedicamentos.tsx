@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeftCircleIcon } from "lucide-react";
+import BackButton from "../../../components/ui/returnButton";
 import { Button } from "../../../components/ui/button";
 import { FooterFuncionarioStock } from "../../../components/ui/footer";
 
@@ -128,13 +128,7 @@ export const IngresarMedicamentos = () => {
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 z-10 bg-white px-4 pt-4 pb-2">
           <div className="relative max-w-md mx-auto">
-            <Button
-              variant="ghost"
-              className="absolute w-8 h-8 top-4 left-0 p-0"
-              onClick={() => navigate("/funcionario/stock")}
-            >
-              <ArrowLeftCircleIcon className="w-8 h-8" />
-            </Button>
+          <BackButton to="/funcionario/stock" />
             <div className="text-center pt-14 pb-4">
               <h1 className="text-xl font-semibold">Ingreso de medicamento</h1>
             </div>

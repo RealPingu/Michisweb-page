@@ -61,9 +61,8 @@ export const EmitirRecetas = (): JSX.Element => {
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 z-10 bg-white px-4 pt-4 pb-2">
           <div className="relative max-w-md mx-auto">
-            <div className="absolute top-4 left-0">
-              <BackButton to="/medico" />
-            </div>
+            <BackButton to="/medico" />
+
             <div className="text-center pt-14 pb-4">
               <h1 className="text-xl font-semibold">Emitir recetas</h1>
             </div>

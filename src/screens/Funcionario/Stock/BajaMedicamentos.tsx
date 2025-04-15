@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { ArrowLeftCircleIcon, SearchIcon } from "lucide-react";
-import { Button } from "../../../components/ui/button";
+import {  SearchIcon } from "lucide-react";
+import BackButton from "../../../components/ui/returnButton";
 import { Card, CardContent } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { useNavigate } from "react-router-dom";
@@ -52,13 +52,8 @@ export const BajaMedicamentos = (): JSX.Element => {
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 z-10 bg-white px-4 pt-4 pb-2">
           <div className="relative max-w-md mx-auto">
-            <Button
-              variant="ghost"
-              className="absolute w-8 h-8 top-4 left-0 p-0"
-              onClick={() => navigate("/funcionario/stock")}
-            >
-              <ArrowLeftCircleIcon className="w-8 h-8" />
-            </Button>
+            <BackButton to="/funcionario/stock" />
+
             <div className="text-center pt-14 pb-4">
               <h1 className="text-xl font-semibold">Baja de Medicamentos</h1>
             </div>

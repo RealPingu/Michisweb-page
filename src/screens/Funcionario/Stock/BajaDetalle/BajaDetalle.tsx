@@ -4,6 +4,8 @@ import { Button } from "../../../../components/ui/button";
 import { Card, CardContent } from "../../../../components/ui/card";
 import { useNavigate, useParams } from "react-router-dom";
 import { JSX } from "react";
+import BackButton from "../../../../components/ui/returnButton";
+
 
 interface RemovalReason {
   id: number;
@@ -70,6 +72,8 @@ export const BajaDetalle = (): JSX.Element => {
             >
               <ArrowLeftCircleIcon className="w-8 h-8" />
             </Button>
+            <BackButton to="/funcionario/stock/baja-medicamentos" />
+
             <div className="text-center pt-14 pb-4">
               <h1 className="text-xl font-semibold">Eliminar del Inventario</h1>
             </div>
