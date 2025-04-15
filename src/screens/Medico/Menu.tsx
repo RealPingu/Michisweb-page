@@ -33,16 +33,13 @@ export const MenuMedico = (): JSX.Element => {
           </div>
         </header>
 
-        <nav className="flex flex-col items-center gap-5 mt-[92px]">
-          {menuOptions.map((option, index) => (
+        <nav className="flex flex-col gap-4 mt-24 w-full px-4">
+          {menuOptions.map((option) => (
             <Button
               key={option.id}
               onClick={() => navigate(option.path)}
-              variant="outline"
-              size= "menu"
-              style={{
-                top: index === 0 ? "92px" : index === 1 ? "158px" : "224px",
-              }}
+              size="lg"
+              className="w-full"
             >
               {option.label}
             </Button>
