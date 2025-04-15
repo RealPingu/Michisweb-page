@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import { ArrowLeftCircleIcon } from "lucide-react";
+import { Button } from "../../../components/ui/button";
+import { FooterFuncionarioStock } from "../../../components/ui/footer";
 
 const buscarMedicamento = (rut: string, principio: string, cantidad: number) => {
   if (principio.toLowerCase() === "ibuprofeno") {
@@ -50,103 +51,110 @@ export const RegistrarEntrega = () => {
 
   const handleConfirmar = () => {
     alert("Entrega confirmada");
-  };
-
-  const handleGoBack = () => {
-    navigate(-1);
+    setResultado(null);
+    setPrincipio("");
+    setCantidad("");
+    setRut("");
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <header className="p-4 bg-white shadow">
-        <div className="flex items-center gap-4">
-          <button onClick={handleGoBack} className="p-2 hover:bg-gray-100 rounded-full">
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <h1 className="text-xl font-semibold">Entrega de Medicamentos</h1>
-        </div>
-      </header>
+    <div className="flex justify-center w-full min-h-screen bg-white">
+      <div className="relative w-full max-w-md mx-auto bg-white min-h-screen">
 
-      {/* Formulario */}
-      <main className="flex-1 px-4 py-6 space-y-4">
-        <div>
-          <label htmlFor="rut" className="block text-sm font-medium text-gray-700">
-            RUT del paciente
-          </label>
-          <input
-            type="text"
-            id="rut"
-            value={rut}
-            onChange={(e) => setRut(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm"
-            placeholder="Ej: 12.345.678-9"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="principio" className="block text-sm font-medium text-gray-700">
-            Principio activo
-          </label>
-          <input
-            type="text"
-            id="principio"
-            value={principio}
-            onChange={(e) => setPrincipio(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm"
-            placeholder="Ej: Paracetamol"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="cantidad" className="block text-sm font-medium text-gray-700">
-            Cantidad a entregar
-          </label>
-          <input
-            type="number"
-            id="cantidad"
-            value={cantidad}
-            onChange={(e) => setCantidad(Number(e.target.value))}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm"
-            placeholder="Ej: 10"
-            min={1}
-          />
-        </div>
-
-        <button
-          onClick={handleBuscar}
-          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
-        >
-          Buscar stock
-        </button>
-
-        {/* Error */}
-        {error && <p className="text-sm text-red-500">{error}</p>}
-
-        {/* Resultado */}
-        {resultado && (
-          <div className="bg-white p-4 rounded-md shadow space-y-1">
-            <h2 className="text-sm font-semibold text-gray-800">Resultado:</h2>
-            <p className="text-sm text-gray-700">
-              Medicamento disponible: <span className="font-medium">{resultado.nombre}</span>
-            </p>
-            <p className="text-sm text-gray-700">
-              Lote: <span className="font-medium">{resultado.lote}</span>
-            </p>
-            <p className="text-sm text-gray-700">
-              Fecha de vencimiento: <span className="font-medium">{resultado.vencimiento}</span>
-            </p>
-
-            {/* Confirmar entrega */}
-            <button
-              onClick={handleConfirmar}
-              className="w-full bg-green-600 text-white py-2 mt-4 rounded-md hover:bg-green-700 transition"
+        {/* Header */}
+        <div className="fixed top-0 left-0 right-0 z-10 bg-white px-4 pt-4 pb-2">
+          <div className="relative max-w-md mx-auto">
+            <Button
+              variant="ghost"
+              className="absolute w-8 h-8 top-4 left-0 p-0"
+              onClick={() => navigate("/funcionario/stock")}
             >
-              Confirmar entrega
-            </button>
+              <ArrowLeftCircleIcon className="w-8 h-8" />
+            </Button>
+            <div className="text-center pt-14 pb-4">
+              <h1 className="text-xl font-semibold">Entrega de medicamento</h1>
+            </div>
           </div>
-        )}
-      </main>
+        </div>
+        {/* Body */}
+        <div className="pt-36 px-4 pb-32">
+          {/* Formulario */}
+          <main className="flex-1 px-4 py-6 space-y-4">
+            <div>
+              <label htmlFor="rut" className="block text-sm font-medium text-gray-700">
+                RUT del paciente
+              </label>
+              <input
+                type="text"
+                id="rut"
+                value={rut}
+                onChange={(e) => setRut(e.target.value)}
+                className="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm"
+                placeholder="Ej: 12.345.678-9"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="principio" className="block text-sm font-medium text-gray-700">
+                Principio activo
+              </label>
+              <input
+                type="text"
+                id="principio"
+                value={principio}
+                onChange={(e) => setPrincipio(e.target.value)}
+                className="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm"
+                placeholder="Ej: Paracetamol"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="cantidad" className="block text-sm font-medium text-gray-700">
+                Cantidad a entregar
+              </label>
+              <input
+                type="number"
+                id="cantidad"
+                value={cantidad}
+                onChange={(e) => setCantidad(Number(e.target.value))}
+                className="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm"
+                placeholder="Ej: 10"
+                min={1}
+              />
+            </div>
+            <div className="text-center mt-4">
+              <Button size="lg" className="w-full" onClick={handleBuscar}>Buscar stock</Button>
+            </div>
+
+            {/* Error */}
+            {error && <p className="text-sm text-red-500">{error}</p>}
+
+            {/* Resultado */}
+            {resultado && (
+              <div className="bg-white p-4 rounded-md shadow space-y-1">
+                <h2 className="text-sm font-semibold text-gray-800">Resultado:</h2>
+                <p className="text-sm text-gray-700">
+                  Medicamento disponible: <span className="font-medium">{resultado.nombre}</span>
+                </p>
+                <p className="text-sm text-gray-700">
+                  Lote: <span className="font-medium">{resultado.lote}</span>
+                </p>
+                <p className="text-sm text-gray-700">
+                  Fecha de vencimiento: <span className="font-medium">{resultado.vencimiento}</span>
+                </p>
+
+                {/* Confirmar entrega */}
+                <div className="text-center mt-4">
+                  <Button size="lg" className="w-full" onClick={handleConfirmar}>Confirmar entrega</Button>
+                </div>
+              </div>
+            )}
+          </main>
+        </div>
+
+        <FooterFuncionarioStock></FooterFuncionarioStock>
+        
+      </div>
     </div>
   );
 };

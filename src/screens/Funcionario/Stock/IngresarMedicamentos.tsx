@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeftCircleIcon } from "lucide-react";
+import { Button } from "../../../components/ui/button";
+import { FooterFuncionarioStock } from "../../../components/ui/footer";
 
 
 const medicamentosDB = [
@@ -43,7 +46,7 @@ export const IngresarMedicamentos = () => {
     fechaVencimiento: "",
     lote: "",
   });
-  const [cantidadRecibida, setCantidadRecibida] = useState<number>(0);
+  const [cantidadRecibida, setCantidadRecibida] = useState<number | "">(0);
   const [cantidadDefectuosa, setCantidadDefectuosa] = useState<number>(0);
   const [isMedicamentoFound, setIsMedicamentoFound] = useState(false);
   const [isDefectuoso, setIsDefectuoso] = useState(false);
@@ -69,7 +72,6 @@ export const IngresarMedicamentos = () => {
         fechaVencimiento: encontrado.fechaVencimiento,
         lote: "",
       });
-      setCantidadRecibida(encontrado.cantidad);
       setIsMedicamentoFound(true);
     } else {
       alert("Medicamento no encontrado, por favor verifica el código de barras.");
@@ -98,171 +100,180 @@ export const IngresarMedicamentos = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const cantidadRecibidaNum = typeof cantidadRecibida === "string" ? Number(cantidadRecibida) : cantidadRecibida;
 
-    if (cantidadDefectuosa > cantidadRecibida) {
+    if (cantidadDefectuosa > cantidadRecibidaNum) {
       alert("La cantidad defectuosa no puede ser mayor a la cantidad recibida.");
+      return;
+    }
+    
+    if (1 > cantidadRecibidaNum) {
+      alert("Ingrese la cantidad recibida.");
       return;
     }
 
     console.log("Ingreso de medicamento:", medicamento);
     console.log("Cantidad defectuosa:", cantidadDefectuosa);
 
-    navigate("/funcionario/stock");
-  };
-
-  const handleGoBack = () => {
-    navigate("/funcionario/stock");
+    setIsMedicamentoFound(false);
+    setCantidadRecibida(0);
+    alert("Ingreso realizado con éxito.");
+    setCodigoBarras("");
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="p-4 bg-white">
-        <div className="flex items-center gap-4">
-          <button className="p-2 hover:bg-gray-100 rounded-full" onClick={handleGoBack}>
-            <span className="text-2xl">←</span>
-          </button>
-          <h1 className="text-2xl font-medium">Ingreso de Medicamento</h1>
-        </div>
-      </header>
+    <div className="flex justify-center w-full min-h-screen bg-white">
+      <div className="relative w-full max-w-md mx-auto bg-white min-h-screen">
 
-      {/* Formulario de Ingreso */}
-      <div className="px-4 py-6">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Escaneo del Código de Barras */}
-          <div>
-            <label
-              htmlFor="codigoBarras"
-              className="block text-sm font-medium text-gray-700"
+        {/* Header */}
+        <div className="fixed top-0 left-0 right-0 z-10 bg-white px-4 pt-4 pb-2">
+          <div className="relative max-w-md mx-auto">
+            <Button
+              variant="ghost"
+              className="absolute w-8 h-8 top-4 left-0 p-0"
+              onClick={() => navigate("/funcionario/stock")}
             >
-              Código de Barras
-            </label>
-            <input
-              type="text"
-              name="codigoBarras"
-              id="codigoBarras"
-              value={codigoBarras}
-              onChange={handleCodigoBarrasChange}
-              onKeyPress={(e) => e.key === "Enter" && handleBuscarMedicamento()}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-purple-500 focus:border-purple-500"
-              required
-            />
-            <button
-              type="button"
-              onClick={handleBuscarMedicamento}
-              className="mt-2 w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition"
-            >
-              Buscar Medicamento
-            </button>
+              <ArrowLeftCircleIcon className="w-8 h-8" />
+            </Button>
+            <div className="text-center pt-14 pb-4">
+              <h1 className="text-xl font-semibold">Ingreso de medicamento</h1>
+            </div>
           </div>
-
-          {/* Mostrar Datos del Medicamento si se encuentra */}
-          {isMedicamentoFound && (
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Nombre</label>
-                <input
-                  type="text"
-                  value={medicamento.nombre}
-                  readOnly
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-purple-500 focus:border-purple-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Principio Activo</label>
-                <input
-                  type="text"
-                  value={medicamento.principioActivo}
-                  readOnly
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-purple-500 focus:border-purple-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Dosis</label>
-                <input
-                  type="text"
-                  value={medicamento.dosis}
-                  readOnly
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-purple-500 focus:border-purple-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Vía de Administración</label>
-                <input
-                  type="text"
-                  value={medicamento.via}
-                  readOnly
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-purple-500 focus:border-purple-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Fecha de Vencimiento</label>
-                <input
-                  type="text"
-                  value={medicamento.fechaVencimiento}
-                  readOnly
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-purple-500 focus:border-purple-500"
-                />
-              </div>
-
-              {/* Campo para Lote y Cantidad Recibida */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Lote</label>
-                <input
-                  type="text"
-                  name="lote"
-                  id="lote"
-                  value={medicamento.lote}
-                  onChange={handleLoteChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-purple-500 focus:border-purple-500"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Cantidad Recibida</label>
-                <input
-                  type="number"
-                  value={cantidadRecibida}
-                  onChange={handleCantidadRecibidaChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-purple-500 focus:border-purple-500"
-                  required
-                />
-              </div>
-
-              {/* Cantidad Defectuosa */}
-              <div>
-                <label className="inline-flex items-center text-sm font-medium text-gray-700">
-                  <input
-                    type="checkbox"
-                    checked={isDefectuoso}
-                    onChange={handleDefectuosoChange}
-                    className="mr-2"
-                  />
-                  Medicamentos defectuosos
+        </div>
+        {/* Body */}
+        <div className="pt-36 px-4 pb-32">
+          {/* Formulario de Ingreso */}
+          <div className="px-4 py-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Escaneo del Código de Barras */}
+              <div className="mb-6">
+                <label htmlFor="codigoBarras" className="block text-sm font-medium text-gray-700">
+                  Código de Barras
                 </label>
-                {isDefectuoso && (
+                <input
+                  type="text"
+                  name="codigoBarras"
+                  id="codigoBarras"
+                  value={codigoBarras}
+                  onChange={handleCodigoBarrasChange}
+                  onKeyPress={(e) => e.key === "Enter" && handleBuscarMedicamento()}
+                  className="w-full p-3 border border-gray-300 rounded-md"
+                  required
+                />
+                <div className="text-center mt-4">
+                  <Button size="lg" className="w-full" onClick={handleBuscarMedicamento}>Buscar Medicamento</Button>
+                </div>
+              </div>
+
+              {/* Mostrar Datos del Medicamento si se encuentra */}
+              {isMedicamentoFound && (
+                <div className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Cantidad Defectuosa</label>
+                    <label className="block text-sm font-medium text-gray-700">Nombre</label>
                     <input
-                      type="number"
-                      value={cantidadDefectuosa}
-                      onChange={handleCantidadDefectuosaChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-purple-500 focus:border-purple-500"
+                      type="text"
+                      value={medicamento.nombre}
+                      readOnly
+                      className="w-full p-3 border border-gray-300 rounded-md"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Principio Activo</label>
+                    <input
+                      type="text"
+                      value={medicamento.principioActivo}
+                      readOnly
+                      className="w-full p-3 border border-gray-300 rounded-md"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Dosis</label>
+                    <input
+                      type="text"
+                      value={medicamento.dosis}
+                      readOnly
+                      className="w-full p-3 border border-gray-300 rounded-md"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Vía de Administración</label>
+                    <input
+                      type="text"
+                      value={medicamento.via}
+                      readOnly
+                      className="w-full p-3 border border-gray-300 rounded-md"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Fecha de Vencimiento</label>
+                    <input
+                      type="text"
+                      value={medicamento.fechaVencimiento}
+                      readOnly
+                      className="w-full p-3 border border-gray-300 rounded-md"
+                    />
+                  </div>
+
+                  {/* Campo para Lote y Cantidad Recibida */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Lote</label>
+                    <input
+                      type="text"
+                      name="lote"
+                      id="lote"
+                      value={medicamento.lote}
+                      onChange={handleLoteChange}
+                      className="w-full p-3 border border-gray-300 rounded-md"
                       required
                     />
                   </div>
-                )}
-              </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Cantidad Recibida</label>
+                    <input
+                      type="number"
+                      value={cantidadRecibida}
+                      onChange={handleCantidadRecibidaChange}
+                      className="w-full p-3 border border-gray-300 rounded-md"
+                      required
+                    />
+                  </div>
 
-              <button
-                type="submit"
-                className="w-full bg-purple-600 text-white py-3 rounded-md hover:bg-purple-700 transition"
-              >
-                Confirmar Ingreso
-              </button>
-            </div>
-          )}
-        </form>
+                  {/* Cantidad Defectuosa */}
+                  <div>
+                    <label className="inline-flex items-center text-sm font-medium text-gray-700">
+                      <input
+                        type="checkbox"
+                        checked={isDefectuoso}
+                        onChange={handleDefectuosoChange}
+                        className="mr-2"
+                      />
+                      Medicamentos defectuosos
+                    </label>
+                    {isDefectuoso && (
+                      <div className="mt-3">
+                        <label className="block text-sm font-medium text-gray-700">Cantidad Defectuosa</label>
+                        <input
+                          type="number"
+                          value={cantidadDefectuosa}
+                          onChange={handleCantidadDefectuosaChange}
+                          className="w-full p-3 border border-gray-300 rounded-md"
+                          required
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="text-center mt-4">
+                    <Button size="lg" className="w-full" >Confirmar ingreso</Button>
+                  </div>
+                </div>
+              )}
+            </form>
+          </div>
+        </div>
+
+        <FooterFuncionarioStock></FooterFuncionarioStock>
+
       </div>
     </div>
   );
