@@ -92,7 +92,7 @@ export const IngresarPrescripcion = (): JSX.Element => {
           </div>
 
           <div className="text-center mt-4">
-            <Button size="lg" onClick={handleGuardarPrescripcion}>Guardar prescripción</Button>
+            <Button size="lg" className="w-full" onClick={handleGuardarPrescripcion}>Guardar prescripción</Button>
           </div>
         </div>
 

@@ -3,6 +3,8 @@ import { Button } from "../../components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { JSX, useState } from "react";
 import { FooterMedico } from "../../components/ui/footer";
+import { usePDF } from "react-to-pdf";
+import Receta from "../../components/ui/receta";
 
 type Medicamento = {
   nombre: string;
@@ -43,14 +45,7 @@ export const EmitirRecetas = (): JSX.Element => {
     setPrescripcionSeleccionada(seleccionada);
     setAdvertencia("");
   };
-  const handleEmitirReceta = () => {
-    if (!prescripcionSeleccionada) {
-      setAdvertencia("Selecciona una prescripción antes de emitir la receta.");
-    }
-    else {
-      alert("Receta emitida correctamente.") //Falta verificar que se pongan datos
-    }
-  };
+  const { toPDF, targetRef } = usePDF({ filename: "receta.pdf" });
   return (
     <div className="flex justify-center w-full min-h-screen bg-white">
       <div className="relative w-full max-w-md mx-auto bg-white min-h-screen">
@@ -93,12 +88,10 @@ export const EmitirRecetas = (): JSX.Element => {
               placeholder="Ingrese RUT"
             />
           </div>
-
           <div className="mb-6">
             <h5 className="text-lg font-medium">Medicamentos</h5>
             <hr />
           </div>
-
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700">Prescripción asociada</label>
             <select
@@ -131,13 +124,21 @@ export const EmitirRecetas = (): JSX.Element => {
               {advertencia}
             </div>
           )}
-          <div className="text-center mt-6">
-            <Button size="lg" onClick={handleEmitirReceta}>Emitir receta</Button>
+          <div className="text-center mt-4">
+            <Button size="lg" className="w-full" onClick={() => toPDF()}>Emitir receta</Button>
           </div>
         </div>
 
         <FooterMedico></FooterMedico>
-        
+
+        <div style = {{ position: 'absolute', top: '-9999px', left: '-9999px' }} ref={targetRef} >
+          <Receta nombrePaciente="Juan Pérez" 
+          edad="30" 
+          direccion="Av. Libertador 1234" 
+          ciudad="Santiago" 
+          ci="12345678-9"/>
+        </div>
+
       </div>
     </div>
   );
