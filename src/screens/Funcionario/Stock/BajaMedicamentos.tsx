@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { ArrowLeftCircleIcon, SearchIcon, MicIcon } from "lucide-react";
+import { ArrowLeftCircleIcon, SearchIcon } from "lucide-react";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { JSX } from "react";
+import { FooterFuncionarioStock } from "../../../components/ui/footer";
 
 interface Medication {
   id: number;
@@ -19,14 +20,30 @@ export const BajaMedicamentos = (): JSX.Element => {
 
   // Sample medication data - replace with your actual data source
   const medications: Medication[] = [
-    { id: 1, name: "Paracetamol", description: "500mg - 20 comprimidos", stock: 150 },
-    { id: 2, name: "Ibuprofeno", description: "400mg - 30 comprimidos", stock: 200 },
-    { id: 3, name: "Aspirina", description: "100mg - 40 comprimidos", stock: 175 },
+    {
+      id: 1,
+      name: "Paracetamol",
+      description: "500mg - 20 comprimidos",
+      stock: 150,
+    },
+    {
+      id: 2,
+      name: "Ibuprofeno",
+      description: "400mg - 30 comprimidos",
+      stock: 200,
+    },
+    {
+      id: 3,
+      name: "Aspirina",
+      description: "100mg - 40 comprimidos",
+      stock: 175,
+    },
   ];
 
-  const filteredMeds = medications.filter(med => 
-    med.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    med.description.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredMeds = medications.filter(
+    (med) =>
+      med.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      med.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -45,7 +62,7 @@ export const BajaMedicamentos = (): JSX.Element => {
             <div className="text-center pt-14 pb-4">
               <h1 className="text-xl font-semibold">Baja de Medicamentos</h1>
             </div>
-            
+
             {/* Search bar */}
             <div className="flex items-center gap-1 bg-m3syslightsurface-container-high rounded-[28px] p-1">
               <div className="flex w-10 h-10 items-center justify-center">
@@ -57,9 +74,6 @@ export const BajaMedicamentos = (): JSX.Element => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <div className="flex w-10 h-10 items-center justify-center">
-                <MicIcon className="w-5 h-5" />
-              </div>
             </div>
           </div>
         </div>
@@ -68,17 +82,25 @@ export const BajaMedicamentos = (): JSX.Element => {
         <div className="pt-44 pb-4 px-4">
           <div className="space-y-4">
             {filteredMeds.map((med) => (
-              <Card 
+              <Card
                 key={med.id}
                 className="w-full cursor-pointer hover:shadow-md transition-shadow"
-                onClick={() => navigate(`/funcionario/stock/baja-medicamentos/${med.id}`)}
+                onClick={() =>
+                  navigate(`/funcionario/stock/baja-medicamentos/${med.id}`)
+                }
               >
                 <CardContent className="p-4">
                   <div className="flex justify-between items-center">
                     <div>
-                      <h2 className="text-lg font-semibold text-[#1E1E1E]">{med.name}</h2>
-                      <p className="text-sm text-[#757575]">{med.description}</p>
-                      <p className="text-sm font-medium text-[#2C2C2C] mt-1">Stock: {med.stock} unidades</p>
+                      <h2 className="text-lg font-semibold text-[#1E1E1E]">
+                        {med.name}
+                      </h2>
+                      <p className="text-sm text-[#757575]">
+                        {med.description}
+                      </p>
+                      <p className="text-sm font-medium text-[#2C2C2C] mt-1">
+                        Stock: {med.stock} unidades
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -86,6 +108,7 @@ export const BajaMedicamentos = (): JSX.Element => {
             ))}
           </div>
         </div>
+        <FooterFuncionarioStock></FooterFuncionarioStock>
       </div>
     </div>
   );

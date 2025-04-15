@@ -1,10 +1,15 @@
 import { useState } from "react";
-import { ArrowLeftCircleIcon, SearchIcon, MicIcon, ChevronRightIcon } from "lucide-react";
+import {
+  ArrowLeftCircleIcon,
+  SearchIcon,
+  ChevronRightIcon,
+} from "lucide-react";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { JSX } from "react";
+import { FooterFuncionarioStock } from "../../../components/ui/footer";
 
 interface ActiveIngredient {
   id: number;
@@ -20,39 +25,40 @@ export const EmitirInformes = (): JSX.Element => {
 
   // Sample data - replace with your actual data source
   const activeIngredients: ActiveIngredient[] = [
-    { 
-      id: 1, 
-      name: "Ácido Acetilsalicílico", 
+    {
+      id: 1,
+      name: "Ácido Acetilsalicílico",
       description: "Antiinflamatorio no esteroideo (AINE)",
       medicationCount: 3,
-      totalStock: 450
+      totalStock: 450,
     },
-    { 
-      id: 2, 
-      name: "Omeprazol", 
+    {
+      id: 2,
+      name: "Omeprazol",
       description: "Inhibidor de la bomba de protones",
       medicationCount: 2,
-      totalStock: 280
+      totalStock: 280,
     },
-    { 
-      id: 3, 
-      name: "Metformina", 
+    {
+      id: 3,
+      name: "Metformina",
       description: "Antidiabético oral",
       medicationCount: 4,
-      totalStock: 600
+      totalStock: 600,
     },
-    { 
-      id: 4, 
-      name: "Amoxicilina", 
+    {
+      id: 4,
+      name: "Amoxicilina",
       description: "Antibiótico betalactámico",
       medicationCount: 3,
-      totalStock: 320
+      totalStock: 320,
     },
   ];
 
-  const filteredIngredients = activeIngredients.filter(ingredient => 
-    ingredient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ingredient.description.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredIngredients = activeIngredients.filter(
+    (ingredient) =>
+      ingredient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ingredient.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -71,7 +77,7 @@ export const EmitirInformes = (): JSX.Element => {
             <div className="text-center pt-14 pb-4">
               <h1 className="text-xl font-semibold">Principios Activos</h1>
             </div>
-            
+
             {/* Search bar */}
             <div className="flex items-center gap-1 bg-m3syslightsurface-container-high rounded-[28px] p-1">
               <div className="flex w-10 h-10 items-center justify-center">
@@ -83,9 +89,6 @@ export const EmitirInformes = (): JSX.Element => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <div className="flex w-10 h-10 items-center justify-center">
-                <MicIcon className="w-5 h-5" />
-              </div>
             </div>
           </div>
         </div>
@@ -94,16 +97,24 @@ export const EmitirInformes = (): JSX.Element => {
         <div className="pt-44 pb-4 px-4">
           <div className="space-y-4">
             {filteredIngredients.map((ingredient) => (
-              <Card 
+              <Card
                 key={ingredient.id}
                 className="w-full cursor-pointer hover:shadow-md transition-shadow"
-                onClick={() => navigate(`/funcionario/stock/emitir-informes/informes?id=${ingredient.id}`)}
+                onClick={() =>
+                  navigate(
+                    `/funcionario/stock/emitir-informes/informes?id=${ingredient.id}`
+                  )
+                }
               >
                 <CardContent className="p-4">
                   <div className="flex justify-between items-center">
                     <div className="flex-1">
-                      <h2 className="text-lg font-semibold text-[#1E1E1E]">{ingredient.name}</h2>
-                      <p className="text-sm text-[#757575]">{ingredient.description}</p>
+                      <h2 className="text-lg font-semibold text-[#1E1E1E]">
+                        {ingredient.name}
+                      </h2>
+                      <p className="text-sm text-[#757575]">
+                        {ingredient.description}
+                      </p>
                       <div className="flex gap-4 mt-2">
                         <p className="text-sm font-medium text-[#2C2C2C]">
                           {ingredient.medicationCount} medicamentos
@@ -120,6 +131,7 @@ export const EmitirInformes = (): JSX.Element => {
             ))}
           </div>
         </div>
+        <FooterFuncionarioStock></FooterFuncionarioStock>
       </div>
     </div>
   );

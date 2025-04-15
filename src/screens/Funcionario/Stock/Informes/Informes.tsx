@@ -1,78 +1,81 @@
-//import { useRef } from "react";
-import { ArrowLeftCircleIcon, FileDown } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
 import { Button } from "../../../../components/ui/button";
-import { Card, CardContent } from "../../../../components/ui/card";
-import { Separator } from "../../../../components/ui/separator";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
 import { usePDF } from "react-to-pdf";
-import { JSX } from "react";
+import InformePDF from "../../../../components/ui/informepdf";
+import BackButton from "../../../../components/ui/returnButton";
+import { FooterFuncionarioStock } from "../../../../components/ui/footer";
 
-interface Medication {
-  id: number;
-  name: string;
-  description: string;
-  stock: number;
-  location: string;
-  expirationDate: Date;
-  laboratory: string;
-  concentration: string;
-}
-
-interface ActiveIngredient {
-  id: number;
-  name: string;
-  description: string;
-  medications: Medication[];
-}
-
-export const Informes = (): JSX.Element => {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const activeIngredientId = searchParams.get("id");
-  const { toPDF, targetRef } = usePDF({ filename: 'informe-medicamentos.pdf' });
-
-  // Sample data - replace with your actual data fetching logic
-  const activeIngredient: ActiveIngredient = {
-    id: Number(activeIngredientId),
+const mockIngredientes = [
+  {
+    id: 1,
     name: "Ácido Acetilsalicílico",
     description: "Antiinflamatorio no esteroideo (AINE)",
-    medications: [
+    medicamentos: [
       {
-        id: 1,
-        name: "Aspirina",
-        description: "Comprimidos recubiertos",
-        concentration: "100mg",
-        laboratory: "Bayer",
+        nombre: "Aspirina",
         stock: 150,
-        location: "Farmacia Central",
-        expirationDate: new Date(2024, 11, 31),
+        concentracion: "500 mg",
+        laboratorio: "Bayer",
+        vencimiento: "2026-03-15",
       },
       {
-        id: 2,
-        name: "Cardioaspirina",
-        description: "Comprimidos con cubierta entérica",
-        concentration: "81mg",
-        laboratory: "Bayer",
-        stock: 200,
-        location: "Farmacia Norte",
-        expirationDate: new Date(2024, 8, 15),
-      },
-      {
-        id: 3,
-        name: "ASA Generic",
-        description: "Comprimidos",
-        concentration: "500mg",
-        laboratory: "Laboratorio Genérico",
+        nombre: "Bufferin",
         stock: 100,
-        location: "Farmacia Sur",
-        expirationDate: new Date(2024, 10, 20),
+        concentracion: "325 mg",
+        laboratorio: "Lion Corp",
+        vencimiento: "2025-10-10",
+      },
+      {
+        nombre: "Ecotrin",
+        stock: 200,
+        concentracion: "81 mg",
+        laboratorio: "Prestige Brands",
+        vencimiento: "2026-01-05",
       },
     ],
-  };
+  },
+  {
+    id: 2,
+    name: "Omeprazol",
+    description: "Inhibidor de la bomba de protones",
+    medicamentos: [
+      {
+        nombre: "Losec",
+        stock: 100,
+        concentracion: "20 mg",
+        laboratorio: "AstraZeneca",
+        vencimiento: "2025-11-10",
+      },
+      {
+        nombre: "Omeprazol MK",
+        stock: 180,
+        concentracion: "20 mg",
+        laboratorio: "Tecnoquímicas",
+        vencimiento: "2026-02-01",
+      },
+    ],
+  },
+  // Puedes continuar agregando los demás ingredientes si lo necesitas
+];
 
-  const totalStock = activeIngredient.medications.reduce((sum, med) => sum + med.stock, 0);
+export const Informes = () => {
+  const [searchParams] = useSearchParams();
+  const id = parseInt(searchParams.get("id") || "", 10);
+  const ingrediente = mockIngredientes.find((i) => i.id === id);
+
+  const { toPDF, targetRef } = usePDF({
+    filename: "informe-principio-activo.pdf",
+    page: { format: "A4" },
+  });
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  if (!ingrediente) {
+    return <div className="p-4 text-center">Ingrediente no encontrado</div>;
+  }
 
   return (
     <div className="flex justify-center w-full min-h-screen bg-white">
@@ -80,84 +83,60 @@ export const Informes = (): JSX.Element => {
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 z-10 bg-white px-4 pt-4 pb-2">
           <div className="relative max-w-md mx-auto">
-            <Button
-              variant="ghost"
-              className="absolute w-8 h-8 top-4 left-0 p-0"
-              onClick={() => navigate("/funcionario/stock/emitir-informes")}
-            >
-              <ArrowLeftCircleIcon className="w-8 h-8" />
-            </Button>
+            <div className="absolute top-4 left-0">
+              <BackButton to="/funcionario/stock/emitir-informes" />
+            </div>
             <div className="text-center pt-14 pb-4">
-              <h1 className="text-xl font-semibold">Detalle de Medicamentos</h1>
-              <p className="text-sm text-[#757575] mt-1">{activeIngredient.description}</p>
+              <h1 className="text-xl font-semibold">Informe</h1>
             </div>
           </div>
         </div>
 
-        {/* Report Content */}
-        <div className="pt-36 pb-24 px-4" ref={targetRef}>
-          {/* Summary Card */}
-          <Card className="mb-6">
-            <CardContent className="p-4">
-              <h2 className="text-lg font-semibold text-[#1E1E1E]">{activeIngredient.name}</h2>
-              <p className="text-sm text-[#757575]">{activeIngredient.description}</p>
-              <Separator className="my-3" />
-              <div className="flex justify-between items-center">
-                <p className="text-sm text-[#757575]">Stock total</p>
-                <p className="text-lg font-semibold text-[#2C2C2C]">{totalStock} unidades</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Medications List */}
+        {/* Body */}
+        <div className="pt-36 px-4 pb-32 space-y-6">
+          <div>
+            <h2 className="text-lg font-bold">{ingrediente.name}</h2>
+            <p className="text-sm text-gray-600">{ingrediente.description}</p>
+          </div>
           <div className="space-y-4">
-            {activeIngredient.medications.map((med) => (
-              <Card key={med.id}>
-                <CardContent className="p-4">
-                  <h3 className="text-base font-semibold text-[#1E1E1E]">{med.name}</h3>
-                  <p className="text-sm text-[#757575]">{med.description}</p>
-                  <div className="mt-2 space-y-1">
-                    <div className="flex justify-between">
-                      <p className="text-sm text-[#757575]">Concentración:</p>
-                      <p className="text-sm font-medium text-[#2C2C2C]">{med.concentration}</p>
-                    </div>
-                    <div className="flex justify-between">
-                      <p className="text-sm text-[#757575]">Laboratorio:</p>
-                      <p className="text-sm font-medium text-[#2C2C2C]">{med.laboratory}</p>
-                    </div>
-                    <div className="flex justify-between">
-                      <p className="text-sm text-[#757575]">Stock:</p>
-                      <p className="text-sm font-medium text-[#2C2C2C]">{med.stock} unidades</p>
-                    </div>
-                    <div className="flex justify-between">
-                      <p className="text-sm text-[#757575]">Ubicación:</p>
-                      <p className="text-sm font-medium text-[#2C2C2C]">{med.location}</p>
-                    </div>
-                    <div className="flex justify-between">
-                      <p className="text-sm text-[#757575]">Vencimiento:</p>
-                      <p className="text-sm font-medium text-[#2C2C2C]">
-                        {format(med.expirationDate, "dd 'de' MMMM, yyyy", { locale: es })}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+            {ingrediente.medicamentos.map((med, idx) => (
+              <div
+                key={idx}
+                className="border border-gray-300 p-4 rounded-md space-y-1 text-sm"
+              >
+                <p>
+                  <strong>Nombre:</strong> {med.nombre}
+                </p>
+                <p>
+                  <strong>Stock:</strong> {med.stock} unidades
+                </p>
+                <p>
+                  <strong>Concentración:</strong> {med.concentracion}
+                </p>
+                <p>
+                  <strong>Laboratorio:</strong> {med.laboratorio}
+                </p>
+                <p>
+                  <strong>Fecha de vencimiento:</strong> {med.vencimiento}
+                </p>
+              </div>
             ))}
           </div>
-        </div>
-
-        {/* Export Button */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-          <div className="max-w-md mx-auto">
-            <Button
-              className="w-full h-[46px] bg-[#2c2c2c] text-white flex items-center justify-center gap-2"
-              onClick={() => toPDF()}
-            >
-              <FileDown className="w-5 h-5" />
-              Exportar a PDF
+          <div className="text-center">
+            <Button size="lg" className="w-full" onClick={() => toPDF()}>
+              Exportar PDF
             </Button>
           </div>
         </div>
+
+        {/* Contenido oculto para PDF */}
+        <div
+          style={{ position: "absolute", top: "-9999px", left: "-9999px" }}
+          ref={targetRef}
+        >
+          <InformePDF ingrediente={ingrediente} />
+        </div>
+        <FooterFuncionarioStock></FooterFuncionarioStock>
       </div>
     </div>
   );
