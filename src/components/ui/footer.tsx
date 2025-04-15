@@ -23,7 +23,7 @@ export const FooterFuncionarioStock = () => {
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-gray-100 border-t text-center text-sm text-gray-500 py-2 flex justify-around">
         <div className="flex flex-col items-center hover:text-black cursor-pointer" onClick={() => navigate("/funcionario/stock/ingresar-medicamentos")}>
           <Package className="w-5 h-5" />
-          <span>Stock</span>
+          <span>Ingreso</span>
         </div>
         <div className="flex flex-col items-center hover:text-black cursor-pointer" onClick={() => navigate("/funcionario/stock/registrar-entrega")}>
           <Truck className="w-5 h-5" />
