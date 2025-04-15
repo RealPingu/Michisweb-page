@@ -81,7 +81,7 @@ export const EmitirRecetas = (): JSX.Element => {
             <input
               type="text"
               className="w-full p-3 border border-gray-300 rounded-md"
-              placeholder="Ingresa nombre"
+              placeholder="Ingrese nombre"
             />
           </div>
           <div className="mb-6">

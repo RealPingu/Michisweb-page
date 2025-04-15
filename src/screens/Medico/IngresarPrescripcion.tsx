@@ -41,7 +41,7 @@ export const IngresarPrescripcion = (): JSX.Element => {
             <input
               type="text"
               className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Ingresa nombre"
+              placeholder="Ingrese nombre"
             />
           </div>
           <div className="mb-6">
