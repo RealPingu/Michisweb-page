@@ -1,4 +1,4 @@
-import { ArrowLeftCircleIcon } from "lucide-react";
+import { Package, Truck, FileText, ArrowDownCircle, ArrowLeftCircleIcon } from "lucide-react";
 import { JSX } from "react";
 import { Button } from "../../../components/ui/button";
 import { Separator } from "../../../components/ui/separator";
@@ -8,11 +8,12 @@ export const MenuStock = (): JSX.Element => {
   const navigate = useNavigate();
 
   const menuOptions = [
-    { id: 1, label: "Ingresar productos", path: "/funcionario/stock/ingresar-medicamentos" },
-    { id: 2, label: "Registrar entregas", path: "/funcionario/stock/registrar-entrega" },
-    { id: 3, label: "Emitir informes", path: "/funcionario/stock/emitir-informes" },
-    { id: 4, label: "Registrar bajas", path: "/funcionario/stock/baja-medicamentos" },
+    { id: 1, label: "Ingresar productos", path: "/funcionario/stock/ingresar-medicamentos", icon: Package },
+    { id: 2, label: "Registrar entregas", path: "/funcionario/stock/registrar-entrega", icon: Truck },
+    { id: 3, label: "Emitir informes", path: "/funcionario/stock/emitir-informes", icon: FileText },
+    { id: 4, label: "Registrar bajas", path: "/funcionario/stock/baja-medicamentos", icon: ArrowDownCircle },
   ];
+  
 
   return (
     <div className="bg-white flex flex-row justify-center w-full">
@@ -34,16 +35,18 @@ export const MenuStock = (): JSX.Element => {
 
         {/* Stock options */}
         <nav className="flex flex-col items-center gap-4 mt-24 px-4">
-          {menuOptions.map((option) => (
+          {menuOptions.map(({ id, label, path, icon: Icon }) => (
             <Button
-              key={option.id}
-              onClick={() => navigate(option.path)}
+              key={id}
+              onClick={() => navigate(path)}
               size="lg"
-              className="w-full"
+              className="w-full flex items-center gap-2"
             >
-              {option.label}
+              <Icon className="w-5 h-5" />
+              {label}
             </Button>
           ))}
+
         </nav>
       </div>
     </div>

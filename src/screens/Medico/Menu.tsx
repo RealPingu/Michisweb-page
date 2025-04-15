@@ -1,8 +1,7 @@
-import { ArrowLeftCircleIcon } from "lucide-react";
+import { ArrowLeftCircleIcon, Package, ClipboardList, FileText } from "lucide-react";
 import { JSX } from "react";
 import { Button } from "../../components/ui/button";
 import { Separator } from "../../components/ui/separator";
-
 import { useNavigate } from "react-router-dom";//A
 
 export const MenuMedico = (): JSX.Element => {
@@ -11,9 +10,9 @@ export const MenuMedico = (): JSX.Element => {
 
   // Menu options data for mapping
   const menuOptions = [
-    { id: 1, label: "Revisar stock", path: "./revisar-stock" },
-    { id: 2, label: "Ingresar prescripciones", path: "./ingresar-prescripcion" },
-    { id: 3, label: "Emitir recetas", path: "./emitir-recetas" },
+    { id: 1, label: "Revisar stock", path: "./revisar-stock", icon: Package },
+    { id: 2, label: "Ingresar prescripciones", path: "./ingresar-prescripcion", icon: ClipboardList },
+    { id: 3, label: "Emitir recetas", path: "./emitir-recetas", icon: FileText },
   ];
 
   return (
@@ -34,14 +33,15 @@ export const MenuMedico = (): JSX.Element => {
         </header>
 
         <nav className="flex flex-col gap-4 mt-24 w-full px-4">
-          {menuOptions.map((option) => (
+          {menuOptions.map(({ id, label, path, icon: Icon }) => (
             <Button
-              key={option.id}
-              onClick={() => navigate(option.path)}
+              key={id}
+              onClick={() => navigate(path)}
               size="lg"
-              className="w-full"
+              className="w-full flex items-center gap-2"
             >
-              {option.label}
+              <Icon className="w-5 h-5" />
+              {label}
             </Button>
           ))}
         </nav>
