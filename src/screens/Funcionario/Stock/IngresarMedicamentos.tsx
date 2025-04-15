@@ -142,7 +142,6 @@ export const IngresarMedicamentos = () => {
         </div>
         {/* Body */}
         <div className="pt-36 pb-20 px-4 overflow-y-auto flex-1">
-          {/* Formulario de Ingreso */}
           <div className="px-4">
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Escaneo del Código de Barras */}
@@ -157,7 +156,7 @@ export const IngresarMedicamentos = () => {
                   value={codigoBarras}
                   onChange={handleCodigoBarrasChange}
                   onKeyPress={(e) => e.key === "Enter" && handleBuscarMedicamento()}
-                  className="w-full p-3 border border-gray-300 rounded-md"
+                  className="mt-1 block w-full p-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
                 <div className="text-center mt-4">
@@ -174,7 +173,7 @@ export const IngresarMedicamentos = () => {
                       type="text"
                       value={medicamento.nombre}
                       readOnly
-                      className="w-full p-3 border border-gray-300 rounded-md"
+                      className="mt-1 block w-full p-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <div>
@@ -183,7 +182,7 @@ export const IngresarMedicamentos = () => {
                       type="text"
                       value={medicamento.principioActivo}
                       readOnly
-                      className="w-full p-3 border border-gray-300 rounded-md"
+                      className="mt-1 block w-full p-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <div>
@@ -192,7 +191,7 @@ export const IngresarMedicamentos = () => {
                       type="text"
                       value={medicamento.dosis}
                       readOnly
-                      className="w-full p-3 border border-gray-300 rounded-md"
+                      className="mt-1 block w-full p-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <div>
@@ -201,7 +200,7 @@ export const IngresarMedicamentos = () => {
                       type="text"
                       value={medicamento.via}
                       readOnly
-                      className="w-full p-3 border border-gray-300 rounded-md"
+                      className="mt-1 block w-full p-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <div>
@@ -210,11 +209,10 @@ export const IngresarMedicamentos = () => {
                       type="text"
                       value={medicamento.fechaVencimiento}
                       readOnly
-                      className="w-full p-3 border border-gray-300 rounded-md"
+                      className="mt-1 block w-full p-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
 
-                  {/* Campo para Lote y Cantidad Recibida */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Lote</label>
                     <input
@@ -223,7 +221,7 @@ export const IngresarMedicamentos = () => {
                       id="lote"
                       value={medicamento.lote}
                       onChange={handleLoteChange}
-                      className="w-full p-3 border border-gray-300 rounded-md"
+                      className="mt-1 block w-full p-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                       required
                     />
                   </div>
@@ -233,12 +231,11 @@ export const IngresarMedicamentos = () => {
                       type="number"
                       value={cantidadRecibida}
                       onChange={handleCantidadRecibidaChange}
-                      className="w-full p-3 border border-gray-300 rounded-md"
+                      className="mt-1 block w-full p-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                       required
                     />
                   </div>
 
-                  {/* Cantidad Defectuosa */}
                   <div>
                     <label className="inline-flex items-center text-sm font-medium text-gray-700">
                       <input
@@ -256,7 +253,7 @@ export const IngresarMedicamentos = () => {
                           type="number"
                           value={cantidadDefectuosa}
                           onChange={handleCantidadDefectuosaChange}
-                          className="w-full p-3 border border-gray-300 rounded-md"
+                          className="mt-1 block w-full p-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                           required
                         />
                       </div>
@@ -264,13 +261,14 @@ export const IngresarMedicamentos = () => {
                   </div>
 
                   <div className="text-center mt-4">
-                    <Button size="lg" className="w-full" >Confirmar ingreso</Button>
+                    <Button size="lg" className="w-full">Confirmar ingreso</Button>
                   </div>
                 </div>
               )}
             </form>
           </div>
         </div>
+
 
         <FooterFuncionarioStock></FooterFuncionarioStock>
 
