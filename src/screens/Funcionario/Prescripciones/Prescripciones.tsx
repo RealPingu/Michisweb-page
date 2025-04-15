@@ -1,13 +1,18 @@
 import { ArrowLeftCircleIcon } from "lucide-react";
 import { JSX } from "react";
 import { Button } from "../../../components/ui/button";
-import { Card, CardContent } from "../../../components/ui/card";
 import { Separator } from "../../../components/ui/separator";
 import { useNavigate } from "react-router-dom";
 
 export const Prescripciones = (): JSX.Element => {
 
   const navigate = useNavigate();
+
+  // Menu options data
+  const menuOptions = [
+    { id: 1, label: "Entrega prescripciones", path: "./pendientes"},
+    { id: 2, label: "Reservas", path: "./reservas"},
+  ];
 
   return (
     <div className="bg-white flex flex-row justify-center w-full">
@@ -28,25 +33,21 @@ export const Prescripciones = (): JSX.Element => {
         </div>
 
         {/* Review prescriptions button */}
-        <Button 
-        onClick={() => navigate("./pendientes")}
-        className="flex w-[307px] h-10 items-center justify-center gap-2 p-3 absolute top-[107px] left-[43px] bg-[#2c2c2c] rounded-lg overflow-hidden border border-solid">
-          <span className="relative w-fit mt-[-1.00px] font-single-line-body-base font-[number:var(--single-line-body-base-font-weight)] text-white text-[length:var(--single-line-body-base-font-size)] tracking-[var(--single-line-body-base-letter-spacing)] leading-[var(--single-line-body-base-line-height)] whitespace-nowrap [font-style:var(--single-line-body-base-font-style)]">
-            Revisar prescripciones pendientes
-          </span>
-        </Button>
-
-        {/* Reservation card */}
-        <Card
-          onClick={() => navigate("./reservas")}
-          className="w-[305px] h-[143px] absolute top-[239px] left-[45px] bg-[#2c2c2c] rounded-lg overflow-hidden border border-solid cursor-pointer hover:bg-[#3d3d3d] transition"
-        >
-          <CardContent className="flex items-center justify-center h-full p-3">
-            <span className="relative w-fit font-single-line-body-base font-[number:var(--single-line-body-base-font-weight)] text-neutral-100 text-[length:var(--single-line-body-base-font-size)] tracking-[var(--single-line-body-base-letter-spacing)] leading-[var(--single-line-body-base-line-height)] whitespace-nowrap [font-style:var(--single-line-body-base-font-style)]">
-              RESERVA
-            </span>
-          </CardContent>
-        </Card>
+        <nav className="flex flex-col items-center gap-5 mt-[92px]">
+          {menuOptions.map((option, index) => (
+            <Button
+              key={option.id}
+              onClick={() => navigate(option.path)}
+              variant="outline"
+              size= "menu"
+              style={{
+                top: index === 0 ? "92px" : index === 1 ? "158px" : "224px",
+              }}
+            >
+              {option.label}
+            </Button>
+          ))}
+        </nav>
       </div>
     </div>
   );

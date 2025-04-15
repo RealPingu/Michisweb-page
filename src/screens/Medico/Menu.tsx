@@ -24,7 +24,7 @@ export const MenuMedico = (): JSX.Element => {
             <ArrowLeftCircleIcon className="absolute w-[34px] h-[33px] top-[17px] left-4 text-black" />
           </button>
 
-          <h1 className="absolute top-[53px] left-[139px] font-single-line-body-base font-[number:var(--single-line-body-base-font-weight)] text-black text-[length:var(--single-line-body-base-font-size)] tracking-[var(--single-line-body-base-letter-spacing)] leading-[var(--single-line-body-base-line-height)] whitespace-nowrap [font-style:var(--single-line-body-base-font-style)]">
+          <h1 className="absolute top-[53px] left-1/2 transform -translate-x-1/2 font-single-line-body-base font-[number:var(--single-line-body-base-font-weight)] text-black text-[length:var(--single-line-body-base-font-size)] tracking-[var(--single-line-body-base-letter-spacing)] leading-[var(--single-line-body-base-line-height)] whitespace-nowrap [font-style:var(--single-line-body-base-font-style)]">
             MENÚ MÉDICO
           </h1>
 
@@ -38,10 +38,9 @@ export const MenuMedico = (): JSX.Element => {
             <Button
               key={option.id}
               onClick={() => navigate(option.path)}
-              className="w-[266px] h-[45px] bg-[#2c2c2c] rounded-lg border border-solid text-neutral-100 font-single-line-body-base font-[number:var(--single-line-body-base-font-weight)] text-[length:var(--single-line-body-base-font-size)] tracking-[var(--single-line-body-base-letter-spacing)] leading-[var(--single-line-body-base-line-height)] [font-style:var(--single-line-body-base-font-style)]"
+              variant="outline"
+              size= "menu"
               style={{
-                position: "absolute",
-                left: "64px",
                 top: index === 0 ? "92px" : index === 1 ? "158px" : "224px",
               }}
             >
