@@ -77,9 +77,9 @@ export const RegistrarEntrega = () => {
           </div>
         </div>
         {/* Body */}
-        <div className="pt-36 px-4 pb-32">
+        <div className="pt-36 px-4 pb-20">
           {/* Formulario */}
-          <main className="flex-1 px-4 py-6 space-y-4">
+          <main className="flex-1 px-4 space-y-4">
             <div>
               <label htmlFor="rut" className="block text-sm font-medium text-gray-700">
                 RUT del paciente

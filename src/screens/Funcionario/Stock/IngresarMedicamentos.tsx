@@ -141,10 +141,10 @@ export const IngresarMedicamentos = () => {
           </div>
         </div>
         {/* Body */}
-        <div className="pt-36 px-4 pb-32">
+        <div className="pt-36 pb-20 px-4 overflow-y-auto flex-1">
           {/* Formulario de Ingreso */}
-          <div className="px-4 py-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="px-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               {/* Escaneo del Código de Barras */}
               <div className="mb-6">
                 <label htmlFor="codigoBarras" className="block text-sm font-medium text-gray-700">
@@ -167,7 +167,7 @@ export const IngresarMedicamentos = () => {
 
               {/* Mostrar Datos del Medicamento si se encuentra */}
               {isMedicamentoFound && (
-                <div className="space-y-6">
+                <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Nombre</label>
                     <input
