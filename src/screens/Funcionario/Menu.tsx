@@ -5,13 +5,12 @@ import { Separator } from "../../components/ui/separator";
 import { useNavigate } from "react-router-dom";
 
 export const MenuFuncionario = (): JSX.Element => {
-  
   const navigate = useNavigate();
 
   // Menu options data
   const menuOptions = [
-    { id: 1, label: "STOCK", path: "./Stock"},
-    { id: 2, label: "PRESCRIPCIONES", path: "./Prescripciones"},
+    { id: 1, label: "STOCK", path: "./Stock" },
+    { id: 2, label: "PRESCRIPCIONES", path: "./Prescripciones" },
   ];
 
   return (
@@ -31,16 +30,13 @@ export const MenuFuncionario = (): JSX.Element => {
           </div>
         </header>
 
-        <nav className="flex flex-col items-center gap-5 mt-[92px]">
-          {menuOptions.map((option, index) => (
+        <nav className="flex flex-col items-center gap-4 mt-24 px-4">
+          {menuOptions.map((option) => (
             <Button
               key={option.id}
               onClick={() => navigate(option.path)}
-              variant="outline"
-              size= "menu"
-              style={{
-                top: index === 0 ? "92px" : index === 1 ? "158px" : "224px",
-              }}
+              size="lg"
+              className="w-full"
             >
               {option.label}
             </Button>
