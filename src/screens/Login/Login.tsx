@@ -70,10 +70,10 @@ export const Login = (): JSX.Element => {
               <div className="text-red-500 text-sm text-center">{error}</div>
             )}
 
-            <div className="pt-4">
+            <div className="flex justify-center">
               <Button
-                onClick={handleLogin}
-                className="h-10 w-full bg-[#65558f] hover:bg-[#534673] text-white rounded-[100px] font-m3-label-large text-[14px] tracking-[0.1px] leading-[20px]"
+                onClick={handleLogin} 
+                variant="default" size="lg"
               >
                 Ingresar
               </Button>

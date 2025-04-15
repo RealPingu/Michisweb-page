@@ -11,6 +11,8 @@ const buttonVariants = cva(
       variant: {
         default:
           "bg-blue-600 text-primary-foreground shadow hover:bg-primary/90",
+        menu:
+          "w-[266px] h-[45px] bg-[#2c2c2c] rounded-lg border border-solid text-neutral-100 font-single-line-body-base font-[number:var(--single-line-body-base-font-weight)] text-[length:var(--single-line-body-base-font-size)] tracking-[var(--single-line-body-base-letter-spacing)] leading-[var(--single-line-body-base-line-height)] [font-style:var(--single-line-body-base-font-style)]",
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
@@ -25,6 +27,7 @@ const buttonVariants = cva(
         sm: "h-8 rounded-md px-3 text-xs",
         lg: "h-10 rounded-md px-8",
         icon: "h-9 w-9",
+        menu: "w-[307px] h-10 bg-blue-600 text-white border border-solid rounded-lg"
       },
     },
     defaultVariants: {

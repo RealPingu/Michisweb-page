@@ -9,11 +9,11 @@ export const MenuStock = (): JSX.Element => {
   const navigate = useNavigate();
 
   // Stock management options data
-  const stockOptions = [
-    { label: "Ingresar productos en stock", path: "/funcionario/stock/ingresar-medicamentos"},
-    { label: "Registrar entrega de medicamentos", path: "/funcionario/stock/registrar-entrega"},
-    { label: "Emitir informes de stock", path: "/funcionario/stock/emitir-informes"},
-    { label: "Registrar baja de medicamentos", path: "/funcionario/stock/baja-medicamentos"}
+  const menuOptions = [
+    { id: 1, label: "Ingresar productos", path: "/funcionario/stock/ingresar-medicamentos"},
+    { id: 2, label: "Registrar entregas", path: "/funcionario/stock/registrar-entrega"},
+    { id: 3, label: "Emitir informes", path: "/funcionario/stock/emitir-informes"},
+    { id: 4, label: "Registrar bajas", path: "/funcionario/stock/baja-medicamentos"}
   ];
 
   return (
@@ -35,20 +35,21 @@ export const MenuStock = (): JSX.Element => {
         </div>
 
         {/* Stock management options */}
-        <div className="flex flex-col gap-[28px] absolute top-[118px] left-[43px]">
-          {stockOptions.map((option, index) => (
+        <nav className="flex flex-col items-center gap-5 mt-[92px]">
+          {menuOptions.map((option, index) => (
             <Button
-              key={index}
+              key={option.id}
               onClick={() => navigate(option.path)}
               variant="outline"
-              className="w-[307px] h-10 bg-[#2c2c2c] text-white border border-solid rounded-lg"
+              size= "menu"
+              style={{
+                top: index === 0 ? "92px" : index === 1 ? "158px" : "224px",
+              }}
             >
-              <span className="font-single-line-body-base font-[number:var(--single-line-body-base-font-weight)] text-[length:var(--single-line-body-base-font-size)] tracking-[var(--single-line-body-base-letter-spacing)] leading-[var(--single-line-body-base-line-height)] whitespace-nowrap [font-style:var(--single-line-body-base-font-style)]">
-                {option.label}
-              </span>
+              {option.label}
             </Button>
           ))}
-        </div>
+        </nav>
       </div>
     </div>
   );
