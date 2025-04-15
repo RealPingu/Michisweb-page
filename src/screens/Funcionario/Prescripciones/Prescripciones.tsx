@@ -1,3 +1,4 @@
+import { ClipboardList, Calendar } from "lucide-react";
 import { JSX } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../../components/ui/button";
@@ -8,8 +9,8 @@ export const Prescripciones = (): JSX.Element => {
   const navigate = useNavigate();
 
   const menuOptions = [
-    { id: 1, label: "Entrega prescripciones", path: "./pendientes" },
-    { id: 2, label: "Reservas", path: "./reservas" },
+    { id: 1, label: "Entrega prescripciones", path: "./pendientes", icon: ClipboardList },
+    { id: 2, label: "Reservas", path: "./reservas", icon: Calendar },
   ];
 
   return (
@@ -28,14 +29,15 @@ export const Prescripciones = (): JSX.Element => {
 
         {/* Body */}
         <div className="pt-36 px-4 pb-32 flex flex-col gap-4">
-          {menuOptions.map((option) => (
+          {menuOptions.map(({ id, label, path, icon: Icon }) => (
             <Button
-              key={option.id}
-              onClick={() => navigate(option.path)}
+              key={id}
+              onClick={() => navigate(path)}
               size="lg"
-              className="w-full"
+              className="w-full flex items-center gap-2"
             >
-              {option.label}
+              <Icon className="w-5 h-5" />
+              {label}
             </Button>
           ))}
         </div>
