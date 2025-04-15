@@ -122,7 +122,7 @@ export const PrescripcionesPendientes = () => {
         </div>
 
         {/* Lista de prescripciones */}
-        <div className="pt-44 pb-4 px-4">
+        <div className="pt-36 pb-4 px-4">
           {filteredPrescriptions.length === 0 ? (
             <p className="text-gray-500 text-center">
               No hay prescripciones {activeTab === 'pending' ? 'pendientes' : 'entregadas'}.

@@ -9,7 +9,7 @@ const BackButton = ({ to = "/funcionario/" }) => {
   return (
     <Button
       variant="ghost"
-      className="w-8 h-8 p-0 hover:bg-gray-100 rounded-full"
+      className="absolute w-8 h-8 top-4 left-0 p-0"
       onClick={() => navigate(to)}
     >
       <ArrowLeftCircleIcon className="w-full h-full text-gray-700" />

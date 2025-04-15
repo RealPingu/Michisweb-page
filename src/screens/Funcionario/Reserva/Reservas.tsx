@@ -56,7 +56,7 @@ export const Reservas = () => {
         </div>
 
       {/* Listado de reservas */}
-      <div className="max-w-4xl mx-auto pt-44">
+      <div className="max-w-4xl mx-auto pt-32 px-4">
         {reservations.map((r) => (
           <Card key={r.id} className={r.status === 'confirmed' ? 'opacity-50' : ''}>
             <CardContent className="p-4 space-y-4">

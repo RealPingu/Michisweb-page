@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { ArrowLeftCircleIcon, Plus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Plus } from "lucide-react";
 import { Button } from "../../../components/ui/button";
+import BackButton from '../../../components/ui/returnButton';
 
 interface MedicationField {
   id: number;
@@ -10,7 +10,6 @@ interface MedicationField {
 }
 
 export const Reservar = () => {
-  const navigate = useNavigate();
   const [rut, setRut] = useState('');
   const [nombre, setNombre] = useState('');
   const [retiraEnFarmacia, setRetiraEnFarmacia] = useState(false);
@@ -49,13 +48,7 @@ export const Reservar = () => {
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 z-10 bg-white px-4 pt-4 pb-2">
           <div className="relative max-w-md mx-auto">
-            <Button
-              variant="ghost"
-              className="absolute w-8 h-8 top-4 left-0 p-0"
-              onClick={() => navigate("/funcionario/prescripciones/reservas")}
-            >
-              <ArrowLeftCircleIcon className="w-8 h-8" />
-            </Button>
+          <BackButton to="/funcionario/prescripciones/reservas" />
             <div className="text-center pt-14 pb-4">
               <h1 className="text-xl font-semibold">Reservar medicamentos</h1>
             </div>
