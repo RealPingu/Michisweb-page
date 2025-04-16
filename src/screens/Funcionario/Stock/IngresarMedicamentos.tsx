@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import BackButton from "../../../components/ui/returnButton";
 import { Button } from "../../../components/ui/button";
 import { FooterFuncionarioStock } from "../../../components/ui/footer";
@@ -46,12 +45,11 @@ export const IngresarMedicamentos = () => {
     fechaVencimiento: "",
     lote: "",
   });
-  const [cantidadRecibida, setCantidadRecibida] = useState<number | "">(0);
-  const [cantidadDefectuosa, setCantidadDefectuosa] = useState<number>(0);
+  const [cantidadRecibida, setCantidadRecibida] = useState<number | "">("");
+  const [cantidadDefectuosa, setCantidadDefectuosa] = useState<number | "">("");
   const [isMedicamentoFound, setIsMedicamentoFound] = useState(false);
-  const [isDefectuoso, setIsDefectuoso] = useState(false);
-
-  const navigate = useNavigate();
+  const [isDefectuoso, setIsDefectuoso] = useState(false);  
+  const [error, setError] = useState<string | null>(null);
 
   const handleCodigoBarrasChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCodigoBarras(e.target.value);
@@ -73,8 +71,9 @@ export const IngresarMedicamentos = () => {
         lote: "",
       });
       setIsMedicamentoFound(true);
+      setError("");
     } else {
-      alert("Medicamento no encontrado, por favor verifica el código de barras.");
+      setError("Medicamento no encontrado, por favor verifica el código de barras.");
       setIsMedicamentoFound(false);
     }
   };
@@ -101,20 +100,28 @@ export const IngresarMedicamentos = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const cantidadRecibidaNum = typeof cantidadRecibida === "string" ? Number(cantidadRecibida) : cantidadRecibida;
+    const cantidadDefectuosaNum = typeof cantidadDefectuosa === "string" ? Number(cantidadDefectuosa) : cantidadDefectuosa;
 
-    if (cantidadDefectuosa > cantidadRecibidaNum) {
-      alert("La cantidad defectuosa no puede ser mayor a la cantidad recibida.");
+
+    if (!isMedicamentoFound) return;
+    if (cantidadDefectuosaNum > cantidadRecibidaNum) {
+      setError("La cantidad defectuosa no puede ser mayor a la cantidad recibida.");
       return;
+    } else {
+      setError("");
     }
     
     if (1 > cantidadRecibidaNum) {
-      alert("Ingrese la cantidad recibida.");
+      setError("Ingrese la cantidad recibida.");
       return;
+    } else {
+      setError("");
     }
 
     console.log("Ingreso de medicamento:", medicamento);
     console.log("Cantidad defectuosa:", cantidadDefectuosa);
 
+    setError("");
     setIsMedicamentoFound(false);
     setCantidadRecibida(0);
     alert("Ingreso realizado con éxito.");
@@ -260,6 +267,9 @@ export const IngresarMedicamentos = () => {
                 </div>
               )}
             </form>
+            
+
+          {error && <p className="text-sm text-red-500">{error}</p>}
           </div>
         </div>
 

@@ -1,12 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeftCircleIcon } from "lucide-react";
 import { Button } from "../../../components/ui/button";
 import { FooterFuncionarioStock } from "../../../components/ui/footer";
 import BackButton from "../../../components/ui/returnButton";
 
 
-const buscarMedicamento = (rut: string, principio: string, cantidad: number) => {
+const buscarMedicamento = (principio: string) => {
   if (principio.toLowerCase() === "ibuprofeno") {
     return {
       nombre: "Ibuprofeno 400mg",
@@ -20,7 +18,6 @@ const buscarMedicamento = (rut: string, principio: string, cantidad: number) => 
 };
 
 export const RegistrarEntrega = () => {
-  const navigate = useNavigate();
 
   const [rut, setRut] = useState("");
   const [principio, setPrincipio] = useState("");
@@ -36,7 +33,7 @@ export const RegistrarEntrega = () => {
       return;
     }
 
-    const res = buscarMedicamento(rut, principio, Number(cantidad));
+  const res = buscarMedicamento(principio);
 
     if (res) {
       if (cantidad > res.disponible) {
