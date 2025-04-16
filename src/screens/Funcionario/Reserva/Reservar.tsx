@@ -10,6 +10,12 @@ interface MedicationField {
   cantidad: string;
 }
 
+interface FormErrors {
+  rut?: string;
+  nombre?: string;
+  medicamentos?: { id: number; medicamento?: string; cantidad?: string }[];
+}
+
 export const Reservar = () => {
   const navigate = useNavigate();
 
@@ -20,6 +26,7 @@ export const Reservar = () => {
     { id: 1, medicamento: '', cantidad: '' }
   ]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
 
   const handleAddMedication = () => {
     const newField = {
@@ -36,14 +43,39 @@ export const Reservar = () => {
     ));
   };
 
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!rut.trim()) newErrors.rut = "El RUT es obligatorio.";
+    if (!nombre.trim()) newErrors.nombre = "El nombre es obligatorio.";
+
+    const medicamentosErrors = medicationFields.map((med) => {
+      const medError: { id: number; medicamento?: string; cantidad?: string } = { id: med.id };
+      if (!med.medicamento.trim()) medError.medicamento = "Este campo es obligatorio.";
+      if (!med.cantidad.trim()) medError.cantidad = "Este campo es obligatorio.";
+      return medError;
+    });
+
+    if (medicamentosErrors.some(err => err.medicamento || err.cantidad)) {
+      newErrors.medicamentos = medicamentosErrors;
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
+
     console.log({
       rut,
       nombre,
       retiraEnFarmacia,
       medicamentos: medicationFields
     });
+
     setModalOpen(true);
   };
 
@@ -82,9 +114,12 @@ export const Reservar = () => {
               type="text"
               value={rut}
               onChange={(e) => setRut(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-md"
+              className={`w-full p-3 border rounded-md ${
+                errors.rut ? 'border-red-500' : 'border-gray-300'
+              }`}
               placeholder="12.345.678-9"
             />
+            {errors.rut && <p className="text-sm text-red-500 mt-1">{errors.rut}</p>}
           </div>
 
           <div className="mb-6">
@@ -93,9 +128,12 @@ export const Reservar = () => {
               type="text"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-md"
+              className={`w-full p-3 border rounded-md ${
+                errors.nombre ? 'border-red-500' : 'border-gray-300'
+              }`}
               placeholder="Horst Von Brand"
             />
+            {errors.nombre && <p className="text-sm text-red-500 mt-1">{errors.nombre}</p>}
           </div>
 
           <div className="mb-6 flex items-center gap-2">
@@ -116,7 +154,7 @@ export const Reservar = () => {
             <hr />
           </div>
 
-          {medicationFields.map((field) => (
+          {medicationFields.map((field, index) => (
             <div key={field.id} className="border border-gray-300 p-4 rounded-md mb-4 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Medicamento</label>
@@ -124,9 +162,14 @@ export const Reservar = () => {
                   type="text"
                   value={field.medicamento}
                   onChange={(e) => handleMedicationChange(field.id, 'medicamento', e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-md"
+                  className={`w-full p-3 border rounded-md ${
+                    errors.medicamentos?.[index]?.medicamento ? 'border-red-500' : 'border-gray-300'
+                  }`}
                   placeholder="Loratadina 10mg"
                 />
+                {errors.medicamentos?.[index]?.medicamento && (
+                  <p className="text-sm text-red-500 mt-1">{errors.medicamentos[index]?.medicamento}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Cantidad</label>
@@ -134,9 +177,14 @@ export const Reservar = () => {
                   type="text"
                   value={field.cantidad}
                   onChange={(e) => handleMedicationChange(field.id, 'cantidad', e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-md"
+                  className={`w-full p-3 border rounded-md ${
+                    errors.medicamentos?.[index]?.cantidad ? 'border-red-500' : 'border-gray-300'
+                  }`}
                   placeholder="X"
                 />
+                {errors.medicamentos?.[index]?.cantidad && (
+                  <p className="text-sm text-red-500 mt-1">{errors.medicamentos[index]?.cantidad}</p>
+                )}
               </div>
             </div>
           ))}
@@ -153,10 +201,7 @@ export const Reservar = () => {
           </div>
 
           <div className="text-center">
-            <Button 
-              size="lg" 
-              type="submit"
-            >Registrar reserva</Button>
+            <Button size="lg" type="submit">Registrar reserva</Button>
           </div>
         </form>
 

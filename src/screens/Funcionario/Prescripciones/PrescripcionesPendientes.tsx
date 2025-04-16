@@ -56,6 +56,7 @@ export const PrescripcionesPendientes = () => {
   const [selectedPrescriptionId, setSelectedPrescriptionId] = useState<number | null>(null);
   const [nombre, setNombre] = useState('');
   const [rutInput, setRutInput] = useState('');
+  const [errors, setErrors] = useState<{ nombre?: string; rut?: string }>({});
 
   const openModal = (id: number) => {
     setSelectedPrescriptionId(id);
@@ -66,11 +67,16 @@ export const PrescripcionesPendientes = () => {
     setModalOpen(false);
     setNombre('');
     setRutInput('');
+    setErrors({});
   };
 
   const handleDeliveryConfirmed = () => {
-    if (!nombre || !rutInput) {
-      alert('Por favor, completa todos los campos');
+    const newErrors: typeof errors = {};
+    if (!nombre.trim()) newErrors.nombre = 'Este campo es obligatorio';
+    if (!rutInput.trim()) newErrors.rut = 'Este campo es obligatorio';
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
@@ -150,7 +156,6 @@ export const PrescripcionesPendientes = () => {
                     </div>
 
                     <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-
                       {prescription.status === 'pending' ? (
                         <Button
                           onClick={() => openModal(prescription.id)}
@@ -180,17 +185,39 @@ export const PrescripcionesPendientes = () => {
               </button>
               <h2 className="text-lg font-semibold mb-4">Confirmar entrega</h2>
               <div className="space-y-3">
-                <Input
-                  placeholder="Nombre de quien retira"
-                  value={nombre}
-                  onChange={e => setNombre(e.target.value)}
-                />
-                <Input
-                  placeholder="RUT de quien retira"
-                  value={rutInput}
-                  onChange={e => setRutInput(e.target.value)}
-                />
-                <Button className="w-full" onClick={handleDeliveryConfirmed}>
+                <div>
+                  <Input
+                    placeholder="Nombre de quien retira"
+                    value={nombre}
+                    onChange={e => {
+                      setNombre(e.target.value);
+                      if (errors.nombre) setErrors(prev => ({ ...prev, nombre: undefined }));
+                    }}
+                  />
+                  {errors.nombre && (
+                    <p className="text-sm text-red-500 mt-1">{errors.nombre}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Input
+                    placeholder="RUT de quien retira"
+                    value={rutInput}
+                    onChange={e => {
+                      setRutInput(e.target.value);
+                      if (errors.rut) setErrors(prev => ({ ...prev, rut: undefined }));
+                    }}
+                  />
+                  {errors.rut && (
+                    <p className="text-sm text-red-500 mt-1">{errors.rut}</p>
+                  )}
+                </div>
+
+                <Button
+                  className="w-full"
+                  onClick={handleDeliveryConfirmed}
+                  disabled={!nombre.trim() || !rutInput.trim()}
+                >
                   Confirmar
                 </Button>
               </div>
