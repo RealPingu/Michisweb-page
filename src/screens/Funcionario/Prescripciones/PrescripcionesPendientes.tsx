@@ -4,6 +4,7 @@ import { Button } from '../../../components/ui/button';
 import { Card, CardContent } from '../../../components/ui/card';
 import { Input } from '../../../components/ui/input';
 import BackButton from '../../../components/ui/returnButton';
+import { FooterFuncionarioPrescripciones } from '../../../components/ui/footer';
 
 export const PrescripcionesPendientes = () => {
   interface Prescription {
@@ -47,7 +48,7 @@ export const PrescripcionesPendientes = () => {
       status: 'delivered',
       entregadoPorNombre: 'Carlos Pérez',
       entregadoPorRUT: '11.111.111-1'
-    }
+    },
   ]);
 
   const [activeTab, setActiveTab] = useState<'pending' | 'delivered'>('pending');
@@ -93,7 +94,7 @@ export const PrescripcionesPendientes = () => {
 
   return (
     <div className="flex justify-center w-full min-h-screen bg-white">
-      <div className="relative w-full max-w-md mx-auto bg-white min-h-screen">
+      <div className="relative w-full max-w-md mx-auto bg-white min-h-screen pb-16">
 
         {/* Encabezado */}
         <div className="fixed top-0 left-0 right-0 z-10 bg-white px-4 pt-4 pb-2">
@@ -149,10 +150,6 @@ export const PrescripcionesPendientes = () => {
                     </div>
 
                     <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                      <button className="text-blue-600 text-sm font-medium flex items-center hover:text-blue-700">
-                        Detalles
-                        <ChevronRight className="w-4 h-4 ml-1" />
-                      </button>
 
                       {prescription.status === 'pending' ? (
                         <Button
@@ -201,6 +198,7 @@ export const PrescripcionesPendientes = () => {
           </div>
         )}
       </div>
+      <FooterFuncionarioPrescripciones />
     </div>
   );
 };

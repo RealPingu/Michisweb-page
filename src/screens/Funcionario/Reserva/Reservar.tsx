@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Plus, X } from "lucide-react";
 import { Button } from "../../../components/ui/button";
-import BackButton from '../../../components/ui/returnButton';
+import BackButton from "../../../components/ui/returnButton";
 
 interface MedicationField {
   id: number;
@@ -10,12 +11,15 @@ interface MedicationField {
 }
 
 export const Reservar = () => {
+  const navigate = useNavigate();
+
   const [rut, setRut] = useState('');
   const [nombre, setNombre] = useState('');
   const [retiraEnFarmacia, setRetiraEnFarmacia] = useState(false);
   const [medicationFields, setMedicationFields] = useState<MedicationField[]>([
     { id: 1, medicamento: '', cantidad: '' }
   ]);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleAddMedication = () => {
     const newField = {
@@ -40,6 +44,16 @@ export const Reservar = () => {
       retiraEnFarmacia,
       medicamentos: medicationFields
     });
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
+  const handleModalConfirm = () => {
+    setModalOpen(false);
+    navigate("/funcionario/prescripciones/reservas");
   };
 
   return (
@@ -48,7 +62,7 @@ export const Reservar = () => {
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 z-10 bg-white px-4 pt-4 pb-2">
           <div className="relative max-w-md mx-auto">
-          <BackButton to="/funcionario/prescripciones/reservas" />
+            <BackButton to="/funcionario/prescripciones/reservas" />
             <div className="text-center pt-14 pb-4">
               <h1 className="text-xl font-semibold">Reservar medicamentos</h1>
             </div>
@@ -139,9 +153,30 @@ export const Reservar = () => {
           </div>
 
           <div className="text-center">
-            <Button size="lg" type="submit">Registrar reserva</Button>
+            <Button 
+              size="lg" 
+              type="submit"
+            >Registrar reserva</Button>
           </div>
         </form>
+
+        {/* Modal de confirmación */}
+        {modalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center px-4">
+            <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm relative">
+              <button className="absolute top-2 right-2 text-gray-400 hover:text-gray-600" onClick={closeModal}>
+                <X className="w-5 h-5" />
+              </button>
+              <h2 className="text-lg font-semibold mb-4 text-center">Reserva realizada</h2>
+              <div className="space-y-4">
+                <p className="text-center text-sm text-gray-700">La reserva de medicamentos fue registrada exitosamente.</p>
+                <Button className="w-full" onClick={handleModalConfirm}>
+                  Aceptar
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
