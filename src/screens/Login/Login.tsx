@@ -38,7 +38,8 @@ export const Login = (): JSX.Element => {
       {/* Encabezado de bienvenida */}
       <div className="text-center mb-6">
         <h1 className="text-3xl font-bold text-[#2196F3]">Farmacia CESFAM</h1>
-        <p className="text-sm text-gray-600">Bienvenido, por favor inicie sesión</p>
+        <p className="text-sm text-gray-600">Bienvenido</p>
+        <p className="text-sm text-gray-600">Por favor inicie sesión</p>
       </div>
 
       <Card className="border-none shadow-md w-full max-w-xs bg-white">
