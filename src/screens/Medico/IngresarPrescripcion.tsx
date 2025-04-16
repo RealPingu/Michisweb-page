@@ -2,23 +2,31 @@ import { Button } from "../../components/ui/button";
 import { useState, JSX } from "react";
 import { FooterMedico } from "../../components/ui/footer";
 import BackButton from "../../components/ui/returnButton";
-import { Plus } from "lucide-react";
+import { Plus, Trash } from "lucide-react"; // Importamos el ícono de eliminar
 
 export const IngresarPrescripcion = (): JSX.Element => {
   const [nombrePaciente, setNombrePaciente] = useState("");
   const [rutPaciente, setRutPaciente] = useState("");
   const [medicamentos, setMedicamentos] = useState([
-    { nombre: "", duracion: "", frecuencia: "" }
+    { nombre: "", duracion: "", frecuencia: "" },
   ]);
   const [mensajeError, setMensajeError] = useState("");
+
   const agregarMedicamento = () => {
     setMedicamentos([...medicamentos, { nombre: "", duracion: "", frecuencia: "" }]);
   };
+
+  const eliminarMedicamento = (index: number) => {
+    const nuevosMedicamentos = medicamentos.filter((_, i) => i !== index);
+    setMedicamentos(nuevosMedicamentos);
+  };
+
   const handleInputChange = (index: number, campo: string, valor: string) => {
     const nuevos = [...medicamentos];
     (nuevos[index] as any)[campo] = valor;
     setMedicamentos(nuevos);
   };
+
   const handleGuardarPrescripcion = () => {
     const camposPacienteVacios = !nombrePaciente.trim() || !rutPaciente.trim();
     const erroresMedicamentos = medicamentos.map(
@@ -32,18 +40,17 @@ export const IngresarPrescripcion = (): JSX.Element => {
     setMensajeError("");
     alert("Prescripción emitida correctamente.");
   };
+
   return (
     <div className="flex justify-center w-full min-h-screen bg-white">
       <div className="relative w-full max-w-md mx-auto bg-white min-h-screen">
-        
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 z-10 bg-white px-4 pt-4 pb-2">
           <div className="relative max-w-md mx-auto">
             <BackButton to="/medico" />
-
             <div className="text-center pt-14 pb-4">
               <h1 className="text-xl font-semibold">Ingresar prescripción</h1>
-            </div>   
+            </div>
           </div>
         </div>
 
@@ -79,8 +86,17 @@ export const IngresarPrescripcion = (): JSX.Element => {
           </div>
 
           {medicamentos.map((medicamento, index) => (
-            <div key={index} className="mb-6 border border-gray-200 rounded-md p-4">
-              <label className="block text-sm font-medium text-gray-700">
+            <div key={index} className="mb-6 border border-gray-200 rounded-md p-4 relative">
+              {/* Botón para eliminar medicamento en la esquina superior derecha */}
+              <Button
+                variant="secondary"
+                size="icon"
+                onClick={() => eliminarMedicamento(index)}
+                className="absolute top-2 right-2"
+              >
+                <Trash />
+              </Button>
+              <label className="block text-sm font-medium text-gray-700 pb-5">
                 Medicamento #{index + 1}
               </label>
               <input
@@ -101,7 +117,7 @@ export const IngresarPrescripcion = (): JSX.Element => {
                 type="text"
                 value={medicamento.frecuencia}
                 onChange={(e) => handleInputChange(index, "frecuencia", e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 mb-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Ej: 12 horas"
               />
             </div>
@@ -129,11 +145,9 @@ export const IngresarPrescripcion = (): JSX.Element => {
               <p className="text-red-600 text-sm">{mensajeError}</p>
             </div>
           )}
-
         </div>
 
         <FooterMedico />
-
       </div>
     </div>
   );
