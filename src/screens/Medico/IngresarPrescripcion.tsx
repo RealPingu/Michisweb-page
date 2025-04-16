@@ -88,7 +88,8 @@ export const IngresarPrescripcion = (): JSX.Element => {
           {medicamentos.map((medicamento, index) => (
             <div key={index} className="mb-6 border border-gray-200 rounded-md p-4 relative">
               {/* Botón para eliminar medicamento en la esquina superior derecha */}
-              <Button
+              { index > 0 && (
+                <Button
                 variant="secondary"
                 size="icon"
                 onClick={() => eliminarMedicamento(index)}
@@ -96,6 +97,7 @@ export const IngresarPrescripcion = (): JSX.Element => {
               >
                 <Trash />
               </Button>
+              )}
               <label className="block text-sm font-medium text-gray-700 pb-5">
                 Medicamento #{index + 1}
               </label>
