@@ -12,7 +12,6 @@ import { JSX } from "react";
 import { FooterFuncionarioStock } from "../../../components/ui/footer";
 import BackButton from "../../../components/ui/returnButton";
 
-
 interface ActiveIngredient {
   id: number;
   name: string;
@@ -65,11 +64,11 @@ export const EmitirInformes = (): JSX.Element => {
 
   return (
     <div className="flex justify-center w-full min-h-screen bg-white">
-      <div className="relative w-full max-w-md mx-auto bg-white min-h-screen">
+      <div className="relative w-full max-w-md mx-auto bg-white min-h-screen flex flex-col">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 z-10 bg-white px-4 pt-4 pb-2">
           <div className="relative max-w-md mx-auto">
-          <BackButton to="/funcionario/stock" />
+            <BackButton to="/funcionario/stock" />
             <div className="text-center pt-14 pb-4">
               <h1 className="text-xl font-semibold">Principios Activos</h1>
             </div>
@@ -90,7 +89,7 @@ export const EmitirInformes = (): JSX.Element => {
         </div>
 
         {/* Active Ingredients List */}
-        <div className="pt-44 pb-4 px-4">
+        <div className="pt-44 pb-20 px-4 overflow-y-auto flex-1">
           <div className="space-y-4">
             {filteredIngredients.map((ingredient) => (
               <Card
