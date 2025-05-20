@@ -1,4 +1,4 @@
-import { Package, ClipboardList, FileText, UserPlus } from "lucide-react";
+import { Package, ClipboardList, FileText } from "lucide-react";
 import { JSX } from "react";
 import { Button } from "../../components/ui/button";
 import { Separator } from "../../components/ui/separator";
@@ -15,7 +15,6 @@ export const MenuMedico = (): JSX.Element => {
     { id: 1, label: "Revisar stock", path: "./revisar-stock", icon: Package },
     { id: 2, label: "Ingresar prescripciones", path: "./ingresar-prescripcion", icon: ClipboardList },
     { id: 3, label: "Emitir recetas", path: "./emitir-recetas", icon: FileText },
-    { id: 4, label: "Agregar paciente", path: "./agregar-paciente", icon: UserPlus},
   ];
 
   return (

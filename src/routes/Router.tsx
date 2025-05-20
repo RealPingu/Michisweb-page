@@ -16,7 +16,6 @@ import { PrescripcionesPendientes } from "../screens/Funcionario/Prescripciones/
 import { Reservas } from "../screens/Funcionario/Reserva/Reservas";
 import { Reservar } from "../screens/Funcionario/Reserva/Reservar"
 import { MenuStock } from "../screens/Funcionario/Stock/Menu";
-import { AgregarPaciente } from "../screens/Medico/CrearPaciente";
 
 export const Router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -38,5 +37,4 @@ export const Router = createBrowserRouter([
   { path: "/medico/revisar-stock", element: <RevisarStock /> },
   { path: "/medico/emitir-recetas", element: <EmitirRecetas /> },
   { path: "/medico/ingresar-prescripcion", element: <IngresarPrescripcion /> },
-  { path: "/medico/agregar-paciente", element: <AgregarPaciente />},
 ]);
