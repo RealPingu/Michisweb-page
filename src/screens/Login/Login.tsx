@@ -4,38 +4,66 @@ import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export const Login = (): JSX.Element => {
   const navigate = useNavigate();
 
   const [usuario, setUsuario] = useState("");
-  const [password, setPassword] = useState("");
+  const [contrasena, setContrasena] = useState("");
   const [error, setError] = useState("");
 
-  const mockUsers = [
-    { username: "F123", password: "func123", role: "funcionario" },
-    { username: "M456", password: "med456", role: "medico" },
-  ];
 
-  const handleLogin = () => {
-    const user = mockUsers.find(
-      (u) => u.username === usuario && u.password === password
-    );
+    useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const role = payload.rol;
 
-    if (user) {
-      if (user.role === "funcionario") {
-        navigate("/funcionario");
-      } else if (user.role === "medico") {
-        navigate("/medico");
+        if (role === "funcionario") navigate("/funcionario");
+        else if (role === "medico") navigate("/medico");
+      } catch {}
+    }
+  }, []);
+  
+  const handleLogin = async () => {
+    setError("");
+
+    try {
+      const response = await fetch("http://localhost:8080/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ RUT: usuario, contrasena }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        const token = data.token;
+        localStorage.setItem("token", token);
+
+        // Decodificar el token para obtener el rol (asume JWT no cifrado)
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const role = payload.rol;
+
+        if (role === "funcionario") {
+          navigate("/funcionario");
+        } else if (role === "medico") {
+          navigate("/medico");
+        } else {
+          setError("Rol no reconocido");
+        }
+      } else {
+        setError(data.detail || "Usuario o contraseña incorrectos");
       }
-    } else {
-      setError("Usuario o contraseña incorrectos");
+    } catch (err) {
+      setError("Error al conectar con el servidor");
     }
   };
 
   return (
     <div className="bg-gray-50 flex flex-col justify-center items-center w-full min-h-screen px-4">
-      {/* Encabezado de bienvenida */}
       <div className="text-center mb-6">
         <h1 className="text-3xl font-bold text-[#2196F3]">Farmacia CESFAM</h1>
         <p className="text-sm text-gray-600">Bienvenido</p>
@@ -48,7 +76,6 @@ export const Login = (): JSX.Element => {
             <UserCircleIcon className="w-24 h-24 text-[#2196F3]" />
           </div>
 
-          {/* Usuario */}
           <div className="flex flex-col gap-1">
             <span className="text-sm font-medium text-gray-700">Código de usuario</span>
             <Input
@@ -61,14 +88,13 @@ export const Login = (): JSX.Element => {
             />
           </div>
 
-          {/* Contraseña */}
           <div className="flex flex-col gap-1">
             <span className="text-sm font-medium text-gray-700">Contraseña</span>
             <Input
               id="password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={contrasena}
+              onChange={(e) => setContrasena(e.target.value)}
               placeholder="Ingrese password"
               className="px-4 py-3 rounded-lg border border-gray-300"
             />
