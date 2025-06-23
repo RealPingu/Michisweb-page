@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_USER: usuario
+      POSTGRES_PASSWORD: contraseña
+      POSTGRES_DB: cesfam
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+
+  login-service:
+    build: ./login-service
+    container_name: login-service
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=usuario
+      - DB_PASSWORD=contraseña
+      - DB_NAME=cesfam
+      - JWT_SECRET=supersecreto123
+      
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - login-service
+    environment:
+      - JWT_SECRET=supersecreto123
+      - LOGIN_SERVICE_URL=http://login-service:3000
+
+  prescripciones-service:
+      build:
+        context: ./prescripciones-service
+      container_name: prescripciones-service
+      restart: always
+      environment:
+        - DATABASE_URL=postgresql+psycopg://usuario:contraseña@db:5432/cesfam
+      depends_on:
+        - db
+      ports:
+        - "3002:3002"
+
+  pacientes-service:
+    build:
+      context: ./pacientes-service
+    container_name: pacientes-service
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql+psycopg://usuario:contraseña@db:5432/cesfam
+    depends_on:
+      - db
+    ports:
+      - "3003:3003"
+
+  reservas-service:
+    build:
+      context: ./reservas-service
+    container_name: reservas-service
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql+psycopg://usuario:contraseña@db:5432/cesfam
+    depends_on:
+      - db
+    ports:
+      - "3004:3004"
+
+  medicamentos-service:
+    build:
+      context: ./medicamentos-service
+    container_name: medicamentos-service
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql+psycopg://usuario:contraseña@db:5432/cesfam
+    depends_on:
+      - db
+    ports:
+      - "3005:3005"
