@@ -262,13 +262,12 @@ export const EmitirRecetas = (): JSX.Element => {
           {rut && !rutValido(rut) && (
             <p className="text-red-600 text-center">Por favor ingresa un RUT válido.</p>
           )}
-          {rutValido(rut) && prescripciones.length === 0 && (
+          {rutValido(rut) && !mensajeError && prescripciones.length === 0 && (
             <p className="text-gray-600 text-center">No hay prescripciones para este paciente.</p>
           )}
-
           {mensajeError && (
             <div className="mb-4 pt-4">
-              <p className="text-red-600 text-sm">{mensajeError}</p>
+              <p className="text-red-600 text-center">{mensajeError}</p>
             </div>
           )}
         </div>
