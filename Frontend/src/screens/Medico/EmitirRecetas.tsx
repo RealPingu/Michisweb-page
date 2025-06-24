@@ -25,6 +25,8 @@ export const EmitirRecetas = (): JSX.Element => {
   const [nombre, setNombre] = useState("");
   const [rut, setRut] = useState("");
   const [prescripciones, setPrescripciones] = useState<Prescripcion[]>([]);
+  const [loadingPDF, setLoadingPDF] = useState(false);
+  const [showRecetaModal, setShowRecetaModal] = useState(false);
 
   const { toPDF, targetRef } = usePDF({ filename: "receta.pdf" });
 
@@ -141,35 +143,15 @@ export const EmitirRecetas = (): JSX.Element => {
     }
 
     setMensajeError("");
+    setShowRecetaModal(true);
+  };
 
-    const baseURL = "http://localhost:8080";
-    const token = localStorage.getItem("token") || "";
-
-    try {
-      // POST para crear receta en backend
-      const res = await fetch(`${baseURL}/prescripcion/agregar-receta/${prescripcionSeleccionada.id_prescripcion}`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(`Error al crear receta: ${errorText}`);
-      }
-
-      const data = await res.json();
-      console.log("Receta creada:", data);
-
-      // Generar PDF
-      toPDF();
-
-    } catch (error: any) {
-      console.error("Error al emitir receta:", error);
-      setMensajeError(error.message || "Error al emitir receta");
-    }
+  const handleDownloadPDF = async () => {
+    setLoadingPDF(true);
+    await new Promise((r) => setTimeout(r, 200)); // pequeña espera para renderizar bien
+    await toPDF();
+    setLoadingPDF(false);
+    setShowRecetaModal(false);
   };
 
   return (
@@ -274,16 +256,39 @@ export const EmitirRecetas = (): JSX.Element => {
 
         <FooterMedico />
 
-        {/* Contenido oculto para PDF */}
-        <div style={{ position: "absolute", top: "-9999px", left: "-9999px" }} ref={targetRef}>
-          <Receta
-            nombrePaciente={nombre || "Nombre no definido"}
-            edad="30"
-            direccion="Av. Libertador 1234"
-            ciudad="Santiago"
-            ci={rut || "RUT no definido"}
-          />
-        </div>
+        {/* Modal para mostrar Receta */}
+        {showRecetaModal && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div
+              className="bg-white p-6 rounded shadow w-full max-w-[900px] relative overflow-y-auto max-h-[90vh]"
+            >
+              <h2 className="text-xl font-semibold mb-4">Vista previa de la receta</h2>
+
+              <div
+                ref={targetRef}
+                className="border p-4"
+                style={{ width: "220mm", maxWidth: "150%" }}
+              >
+                <Receta
+                  nombrePaciente={nombre || "Nombre no definido"}
+                  edad="30"
+                  direccion="Av. Libertador 1234"
+                  ciudad="Santiago"
+                  ci={rut || "RUT no definido"}
+                />
+              </div>
+
+              <div className="flex justify-end mt-4 gap-2">
+                <Button onClick={handleDownloadPDF} disabled={loadingPDF}>
+                  {loadingPDF ? "Generando PDF..." : "Descargar PDF"}
+                </Button>
+                <Button variant="secondary" onClick={() => setShowRecetaModal(false)}>
+                  Cancelar
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
