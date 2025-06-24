@@ -204,7 +204,7 @@ export const IngresarPrescripcion = (): JSX.Element => {
                   variant="secondary"
                   size="icon"
                   onClick={() => eliminarMedicamento(index)}
-                  className="absolute top-2 right-2"
+                  className="absolute top-1 right-1 z-0"
                 >
                   <Trash />
                 </Button>
