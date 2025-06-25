@@ -1,7 +1,71 @@
-import React, { useRef } from 'react';
+// components/pdf/RecetaPDF.tsx
+import React from "react";
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+} from "@react-pdf/renderer";
 
-// Define la interfaz para las props del componente
-interface RecetaProps {
+// Estilos tipo React Native
+const styles = StyleSheet.create({
+  page: {
+    padding: 40,
+    fontSize: 12,
+    fontFamily: "Helvetica",
+  },
+  title: {
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  section: {
+    marginVertical: 10,
+  },
+  heading: {
+    textAlign: "center",
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 6,
+  },
+  table: {
+    display: "flex",
+    flexDirection: "row",
+    borderWidth: 1,
+    marginBottom: 10,
+  },
+  cell: {
+    flex: 1,
+    borderWidth: 1,
+    padding: 4,
+    textAlign: "center",
+  },
+  row: {
+    flexDirection: "row",
+  },
+  line: {
+    marginBottom: 4,
+  },
+  recetaBody: {
+    marginTop: 20,
+    paddingLeft: 20,
+  },
+  firma: {
+    marginTop: 30,
+    textAlign: "right",
+    fontWeight: "medium",
+  },
+  footer: {
+    marginTop: 30,
+    textAlign: "center",
+    fontSize: 8,
+    color: "#999",
+  },
+});
+
+interface Props {
   nombrePaciente: string;
   edad: string;
   direccion: string;
@@ -9,88 +73,65 @@ interface RecetaProps {
   ci: string;
 }
 
-const Receta: React.FC<RecetaProps> = ({ nombrePaciente, edad, direccion, ciudad, ci }) => {
-  const targetRef = useRef(null);
+const RecetaPDF: React.FC<Props> = ({
+  nombrePaciente,
+  edad,
+  direccion,
+  ciudad,
+  ci,
+}) => (
+  <Document>
+    <Page size="A4" style={styles.page}>
+      <Text style={styles.title}>RECETA</Text>
 
-  return (
-    <div
-      style={{ width: '210mm' }}
-      ref={targetRef}
-    >
-      {/* Título centrado */}
-      <div className="text-center text-xl font-bold my-4">RECETA</div>
-      <div className="container p-4">
-        <hr className="border-t-4 border-blue-600 mt-4" />
-        {/* Header */}
-        <h3 className="text-center text-lg font-semibold mb-2">DATOS DEL PROFESIONAL</h3>
-        <div className="header p-4 rounded">
-          {/* Tabla fecha */}
-          <table className="table-fixed border border-black text-center text-sm w-1/2">
-            <thead>
-              <tr>
-                <th className="border border-black px-4 py-1">DÍA</th>
-                <th className="border border-black px-4 py-1">MES</th>
-                <th className="border border-black px-4 py-1">AÑO</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="border border-black h-8"></td>
-                <td className="border border-black h-8"></td>
-                <td className="border border-black h-8"></td>
-              </tr>
-            </tbody>
-          </table>
+      <View style={styles.section}>
+        <Text style={styles.heading}>DATOS DEL PROFESIONAL</Text>
 
-          {/* Datos */}
-          <div className="space-y-3 text-sm w-full">
-            <div className="flex justify-between gap-4">
-              <div className="flex-1">
-                <span className="pr-2">Nombre Paciente:</span>
-                <span>{nombrePaciente}</span>
-              </div>
-              <div className="w-32">
-                <span className="pr-1">Edad:</span>
-                <span>{edad}</span>
-              </div>
-            </div>
-            <div>
-              <span className="pr-2">Dirección:</span>
-              <span>{direccion}</span>
-            </div>
-            <div className="flex justify-between gap-4">
-              <div className="flex-1">
-                <span className="pr-2">Ciudad:</span>
-                <span>{ciudad}</span>
-              </div>
-              <div className="w-52">
-                <span className="pr-1">CI:</span>
-                <span>{ci}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Tabla de Fecha */}
+        <View style={styles.table}>
+          <Text style={styles.cell}>DÍA</Text>
+          <Text style={styles.cell}>MES</Text>
+          <Text style={styles.cell}>AÑO</Text>
+        </View>
+        <View style={styles.table}>
+          <Text style={styles.cell}> </Text>
+          <Text style={styles.cell}> </Text>
+          <Text style={styles.cell}> </Text>
+        </View>
 
-        <hr className="border-t-4 border-blue-600 mt-4" />
-        {/* Cuerpo receta */}
-        <div className="rp font-bold mt-4">Rp:</div>
-        <div className="p-10">
-          <div className="contenido mt-2 text-sm">
-            <i>Marca comercial</i><br />
-            <span className="generico font-semibold">NOMBRE GENÉRICO</span><br /><br />
-            Tabletas de 500 mg.<br /><br />
-            <b>Tomar 1 tableta cada 12 horas<br />durante 14 días.</b><br /><br />
-            <span className="generico font-semibold">TOTAL 28 UNIDADES</span>
-          </div>
-        </div>
-        <div className="firma mt-8 font-medium text-right">FIRMA MÉDICO</div>
-        {/* Footer */}
-        <div className="w-full text-xs text-gray-500 text-center py-2 mt-8">
-          IMPRENTA • RUT • DIRECCIÓN • TELÉFONO
-        </div>
-      </div>
-    </div>
-  );
-};
+        {/* Datos del paciente */}
+        <View style={{ marginTop: 10 }}>
+          <Text style={styles.line}>Nombre Paciente: {nombrePaciente}</Text>
+          <Text style={styles.line}>Edad: {edad}</Text>
+          <Text style={styles.line}>Dirección: {direccion}</Text>
+          <Text style={styles.line}>Ciudad: {ciudad}</Text>
+          <Text style={styles.line}>CI: {ci}</Text>
+        </View>
+      </View>
 
-export default Receta;
+      {/* Cuerpo de la receta */}
+      <View style={styles.section}>
+        <Text style={{ fontWeight: "bold" }}>Rp:</Text>
+        <View style={styles.recetaBody}>
+          <Text><Text style={{ fontStyle: "italic" }}>Marca comercial</Text></Text>
+          <Text style={{ fontWeight: "bold" }}>NOMBRE GENÉRICO</Text>
+          <Text>Tabletas de 500 mg.</Text>
+          <Text style={{ fontWeight: "bold" }}>
+            Tomar 1 tableta cada 12 horas durante 14 días.
+          </Text>
+          <Text style={{ fontWeight: "bold" }}>TOTAL 28 UNIDADES</Text>
+        </View>
+      </View>
+
+      {/* Firma */}
+      <Text style={styles.firma}>FIRMA MÉDICO</Text>
+
+      {/* Footer */}
+      <Text style={styles.footer}>
+        IMPRENTA • RUT • DIRECCIÓN • TELÉFONO
+      </Text>
+    </Page>
+  </Document>
+);
+
+export default RecetaPDF;

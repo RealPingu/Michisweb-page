@@ -189,7 +189,7 @@ export const IngresarPrescripcion = (): JSX.Element => {
               value={rutPaciente}
               onChange={(e) => setRutPaciente(e.target.value)}
               className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Ej: 55555555-5"
+              placeholder="Ej: 12345678-9"
             />
           </div>
           <div className="mb-6">
