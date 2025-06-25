@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, X } from "lucide-react";
+import { Plus, X, Trash } from "lucide-react"; // <-- Agregado Trash
 import { Button } from "../../../components/ui/button";
 import BackButton from "../../../components/ui/returnButton";
 
@@ -35,6 +35,11 @@ export const Reservar = () => {
       cantidad: ''
     };
     setMedicationFields([...medicationFields, newField]);
+  };
+
+  const handleRemoveMedication = (id: number) => {
+    const updatedFields = medicationFields.filter(field => field.id !== id);
+    setMedicationFields(updatedFields);
   };
 
   const handleMedicationChange = (id: number, field: 'medicamento' | 'cantidad', value: string) => {
@@ -79,9 +84,7 @@ export const Reservar = () => {
     setModalOpen(true);
   };
 
-  const closeModal = () => {
-    setModalOpen(false);
-  };
+  const closeModal = () => setModalOpen(false);
 
   const handleModalConfirm = () => {
     setModalOpen(false);
@@ -108,6 +111,7 @@ export const Reservar = () => {
             <hr />
           </div>
 
+          {/* RUT */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700">RUT</label>
             <input
@@ -122,6 +126,7 @@ export const Reservar = () => {
             {errors.rut && <p className="text-sm text-red-500 mt-1">{errors.rut}</p>}
           </div>
 
+          {/* Nombre */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700">Nombre</label>
             <input
@@ -136,6 +141,7 @@ export const Reservar = () => {
             {errors.nombre && <p className="text-sm text-red-500 mt-1">{errors.nombre}</p>}
           </div>
 
+          {/* Retira en farmacia */}
           <div className="mb-6 flex items-center gap-2">
             <input
               type="checkbox"
@@ -149,13 +155,26 @@ export const Reservar = () => {
             </label>
           </div>
 
+          {/* Medicamentos */}
           <div className="mb-6">
             <h5 className="text-lg font-medium">Medicamentos</h5>
             <hr />
           </div>
 
           {medicationFields.map((field, index) => (
-            <div key={field.id} className="border border-gray-300 p-4 rounded-md mb-4 space-y-4">
+            <div key={field.id} className="border border-gray-300 p-4 rounded-md mb-4 space-y-4 relative">
+              {/* Botón de eliminar solo para campos adicionales */}
+              {index > 0 && (
+                <Button
+                variant="secondary"
+                size="icon"
+                onClick={() => handleRemoveMedication(field.id)}
+                className="absolute top-2 right-2"
+              >
+                <Trash />
+              </Button>
+              )}
+
               <div>
                 <label className="block text-sm font-medium text-gray-700">Medicamento</label>
                 <input
@@ -171,6 +190,7 @@ export const Reservar = () => {
                   <p className="text-sm text-red-500 mt-1">{errors.medicamentos[index]?.medicamento}</p>
                 )}
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700">Cantidad</label>
                 <input
@@ -189,6 +209,7 @@ export const Reservar = () => {
             </div>
           ))}
 
+          {/* Botón agregar medicamento */}
           <div className="flex justify-center mb-6">
             <Button
               type="button"
@@ -200,6 +221,7 @@ export const Reservar = () => {
             </Button>
           </div>
 
+          {/* Botón enviar */}
           <div className="text-center">
             <Button size="lg" type="submit">Registrar reserva</Button>
           </div>

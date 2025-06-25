@@ -4,6 +4,7 @@ import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
 import { useNavigate } from "react-router-dom";
+import { loginUsuario } from "../../services/auth"; // o el path que corresponda
 
 export const Login = (): JSX.Element => {
   const navigate = useNavigate();
@@ -12,24 +13,24 @@ export const Login = (): JSX.Element => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const mockUsers = [
-    { username: "F123", password: "func123", role: "funcionario" },
-    { username: "M456", password: "med456", role: "medico" },
-  ];
+  const handleLogin = async () => {
+    setError("");
 
-  const handleLogin = () => {
-    const user = mockUsers.find(
-      (u) => u.username === usuario && u.password === password
-    );
+    try {
+      const data = await loginUsuario(usuario, password);
+      localStorage.setItem("token", data.token);
 
-    if (user) {
-      if (user.role === "funcionario") {
+      const payload = JSON.parse(atob(data.token.split('.')[1]));
+
+      if (payload.rol === "funcionario") {
         navigate("/funcionario");
-      } else if (user.role === "medico") {
+      } else if (payload.rol === "medico") {
         navigate("/medico");
+      } else {
+        setError("Rol no reconocido");
       }
-    } else {
-      setError("Usuario o contraseña incorrectos");
+    } catch (err: any) {
+      setError(err.message || "Error de red");
     }
   };
 
