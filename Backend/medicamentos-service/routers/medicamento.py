@@ -42,7 +42,15 @@ async def obtener_info_medicamento(codigo_barras: UUID, session: AsyncSession = 
     medicamento = await crud.get_medicamento_por_codigo_barras(session, codigo_barras)
     if not medicamento:
         raise HTTPException(status_code=404, detail="Medicamento no encontrado")
-    return medicamento
+
+    return {
+        "id_medicamento": medicamento.id_medicamento,
+        "nombre": medicamento.nombre,
+        "dosis_concentracion": medicamento.dosis_concentracion,
+        "via_administracion": medicamento.via_administracion,
+        "codigo_barras": medicamento.codigo_barras,
+        "principio_activo": medicamento.principios[0].nombre if medicamento.principios else "Desconocido"
+    }
 
 @router.post("", response_model=LoteOut)
 async def crear_lote(

@@ -4,49 +4,23 @@ import { Button } from "../../../components/ui/button";
 import { FooterFuncionarioStock } from "../../../components/ui/footer";
 
 
-const medicamentosDB = [
-  {
-    codigoBarras: "123456789",
-    nombre: "Paracetamol",
-    principioActivo: "Ácido acetilsalicílico",
-    dosis: "500 mg",
-    via: "Oral",
-    cantidad: 450,
-    fechaVencimiento: "2025-12-31",
-  },
-  {
-    codigoBarras: "987654321",
-    nombre: "Eutirox",
-    principioActivo: "Levotiroxina sódica",
-    dosis: "100 mg",
-    via: "Oral",
-    cantidad: 120,
-    fechaVencimiento: "2024-06-30",
-  },
-  {
-    codigoBarras: "555555555",
-    nombre: "Loratadina",
-    principioActivo: "Loratadina",
-    dosis: "10 mg",
-    via: "Oral",
-    cantidad: 200,
-    fechaVencimiento: "2026-05-20",
-  },
-];
-
 export const IngresarMedicamentos = () => {
   const [codigoBarras, setCodigoBarras] = useState("");
-  const [medicamento, setMedicamento] = useState<any>({
-    nombre: "",
-    principioActivo: "",
-    dosis: "",
-    via: "",
-    cantidad: 0,
-    fechaVencimiento: "",
-    lote: "",
-  });
+const [medicamento, setMedicamento] = useState<any>({
+  nombre: "",
+  principioActivo: "",
+  dosis: "",
+  via: "",
+  cantidad: 0,
+  fechaVencimiento: "",
+  lote: "",
+  codigoBarras: "",
+});
   const [cantidadRecibida, setCantidadRecibida] = useState<number | "">("");
   const [cantidadDefectuosa, setCantidadDefectuosa] = useState<number | "">("");
+  const [cantidadVencida, setCantidadVencida] = useState<number | "">("");
+  const [cantidadMalEstado, setCantidadMalEstado] = useState<number | "">("");
+  const [cantidadEnvaseRoto, setCantidadEnvaseRoto] = useState<number | "">("");
   const [isMedicamentoFound, setIsMedicamentoFound] = useState(false);
   const [isDefectuoso, setIsDefectuoso] = useState(false);  
   const [error, setError] = useState<string | null>(null);
@@ -55,29 +29,48 @@ export const IngresarMedicamentos = () => {
     setCodigoBarras(e.target.value);
   };
 
-  const handleBuscarMedicamento = () => {
-    const encontrado = medicamentosDB.find(
-      (med) => med.codigoBarras === codigoBarras
-    );
+const handleBuscarMedicamento = async () => {
+  const token = localStorage.getItem("token") || "";
+  const hoy = new Date();
+  const fechaVencimientoAuto = new Date(hoy.setMonth(hoy.getMonth() + 3))
+  .toISOString()
+  .split("T")[0]; // formato YYYY-MM-DD
 
-    if (encontrado) {
-      setMedicamento({
-        nombre: encontrado.nombre,
-        principioActivo: encontrado.principioActivo,
-        dosis: encontrado.dosis,
-        via: encontrado.via,
-        cantidad: encontrado.cantidad,
-        fechaVencimiento: encontrado.fechaVencimiento,
-        lote: "",
-      });
-      setIsMedicamentoFound(true);
-      setError("");
-    } else {
+  try {
+    const res = await fetch(`http://localhost:8080/medicamentos/codigo_barras/${codigoBarras}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
       setError("Medicamento no encontrado, por favor verifica el código de barras.");
       setIsMedicamentoFound(false);
+      return;
     }
-  };
 
+    const data = await res.json();
+
+    setMedicamento({
+      id: data.id_medicamento,
+      nombre: data.nombre,
+      principioActivo: data.principio_activo,
+      dosis: data.dosis_concentracion,
+      via: data.via_administracion,
+      cantidad: 0, // esta parte no viene, así que puedes ignorarla o dejarla en 0
+      fechaVencimiento: fechaVencimientoAuto, // eso se setea al ingresar
+      lote: "",
+      codigoBarras: codigoBarras, // lo que buscaste
+    });
+
+    setIsMedicamentoFound(true);
+    setError("");
+  } catch (error) {
+    console.error("Error buscando medicamento:", error);
+    setError("Error al buscar medicamento.");
+    setIsMedicamentoFound(false);
+  }
+};
   const handleLoteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMedicamento({ ...medicamento, lote: e.target.value });
   };
@@ -97,36 +90,71 @@ export const IngresarMedicamentos = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const cantidadRecibidaNum = typeof cantidadRecibida === "string" ? Number(cantidadRecibida) : cantidadRecibida;
-    const cantidadDefectuosaNum = typeof cantidadDefectuosa === "string" ? Number(cantidadDefectuosa) : cantidadDefectuosa;
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
+  const cantidadRecibidaNum = typeof cantidadRecibida === "string" ? Number(cantidadRecibida) : cantidadRecibida;
+  const defectuosa = typeof cantidadDefectuosa === "string" ? Number(cantidadDefectuosa) : cantidadDefectuosa;
+  const vencida = typeof cantidadVencida === "string" ? Number(cantidadVencida) : cantidadVencida;
+  const malEstado = typeof cantidadMalEstado === "string" ? Number(cantidadMalEstado) : cantidadMalEstado;
+  const envaseRoto = typeof cantidadEnvaseRoto === "string" ? Number(cantidadEnvaseRoto) : cantidadEnvaseRoto;
 
-    if (!isMedicamentoFound) return;
-    if (cantidadDefectuosaNum > cantidadRecibidaNum) {
-      setError("La cantidad defectuosa no puede ser mayor a la cantidad recibida.");
-      return;
-    } else {
-      setError("");
+  const totalDefectuosos = defectuosa + vencida + malEstado + envaseRoto;
+
+  if (!isMedicamentoFound) return;
+  if (totalDefectuosos > cantidadRecibidaNum) {
+    setError("La cantidad defectuosa no puede ser mayor a la cantidad recibida.");
+    return;
+  }
+  if (1 > cantidadRecibidaNum) {
+    setError("Ingrese la cantidad recibida.");
+    return;
+  }
+
+  const loteData = {
+    codigo_barras: medicamento.codigoBarras,
+    lote: medicamento.lote,
+    fecha_vencimiento: new Date(medicamento.fechaVencimiento).toISOString(),
+    cantidad: cantidadRecibidaNum,
+    hay_defectuosos: isDefectuoso,
+    cantidad_reservada: 0,
+    cantidad_defectuosa: isDefectuoso ? defectuosa : 0,
+    cantidad_en_idea: isDefectuoso ? vencida : 0,
+    cantidad_en_estado: isDefectuoso ? malEstado : 0,
+    cantidad_envase_roto: isDefectuoso ? envaseRoto : 0,
+  };
+
+  const token = localStorage.getItem("token") || "";
+  try {
+    const res = await fetch("http://localhost:8080/medicamentos", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(loteData),
+    });
+
+    if (!res.ok) {
+      const msg = await res.text();
+      throw new Error(msg || "Error al crear lote");
     }
-    
-    if (1 > cantidadRecibidaNum) {
-      setError("Ingrese la cantidad recibida.");
-      return;
-    } else {
-      setError("");
-    }
 
-    console.log("Ingreso de medicamento:", medicamento);
-    console.log("Cantidad defectuosa:", cantidadDefectuosa);
-
-    setError("");
+    alert("Lote ingresado con éxito.");
+    // Reset de los campos
     setIsMedicamentoFound(false);
     setCantidadRecibida(0);
-    alert("Ingreso realizado con éxito.");
+    setCantidadDefectuosa(0);
     setCodigoBarras("");
-  };
+    setCantidadVencida("");
+    setCantidadMalEstado("");
+    setCantidadEnvaseRoto("");
+    setError("");
+  } catch (err) {
+    console.error("Error al crear lote:", err);
+    setError("Hubo un problema al guardar el lote.");
+  }
+};
 
   return (
     <div className="flex justify-center w-full min-h-screen bg-white">
@@ -249,14 +277,46 @@ export const IngresarMedicamentos = () => {
                     </label>
                     {isDefectuoso && (
                       <div className="mt-3">
-                        <label className="block text-sm font-medium text-gray-700">Cantidad Defectuosa</label>
-                        <input
-                          type="number"
-                          value={cantidadDefectuosa}
-                          onChange={handleCantidadDefectuosaChange}
-                          className="mt-1 block w-full p-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          required
-                        />
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Cantidad Defectuosa</label>
+                          <input
+                            type="number"
+                            value={cantidadDefectuosa}
+                            onChange={handleCantidadDefectuosaChange}
+                            className="mt-1 block w-full p-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Cantidad Vencida</label>
+                          <input
+                            type="number"
+                            value={cantidadVencida}
+                            onChange={(e) => setCantidadVencida(Number(e.target.value))}
+                            className="mt-1 block w-full p-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Cantidad en Mal Estado</label>
+                          <input
+                            type="number"
+                            value={cantidadMalEstado}
+                            onChange={(e) => setCantidadMalEstado(Number(e.target.value))}
+                            className="mt-1 block w-full p-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Cantidad con Envase Roto</label>
+                          <input
+                            type="number"
+                            value={cantidadEnvaseRoto}
+                            onChange={(e) => setCantidadEnvaseRoto(Number(e.target.value))}
+                            className="mt-1 block w-full p-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                          />
+                        </div>
                       </div>
                     )}
                   </div>

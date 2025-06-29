@@ -29,9 +29,16 @@ async def get_lotes_por_medicamento(session: AsyncSession, id_medicamento: UUID)
 
 async def get_medicamento_por_codigo_barras(session: AsyncSession, codigo_barras: UUID):
     result = await session.execute(
-        select(Medicamento).where(Medicamento.codigo_barras == codigo_barras)
+        select(Medicamento)
+        .options(selectinload(Medicamento.principios))  # <- esto es lo importante
+        .where(Medicamento.codigo_barras == codigo_barras)
     )
-    return result.scalars().first()
+    medicamento = result.scalars().first()
+
+    if not medicamento:
+        raise HTTPException(status_code=404, detail="Medicamento no encontrado")
+
+    return medicamento
 
 async def crear_lote_por_codigo(session: AsyncSession, data: LoteCreateBase):
     # Buscar el medicamento por código de barras

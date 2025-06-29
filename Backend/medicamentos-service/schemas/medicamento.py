@@ -3,11 +3,22 @@ from pydantic import BaseModel, Field
 from uuid import UUID
 from typing import List, Optional
 from enum import Enum
+        
+class PrincipioActivoOut(BaseModel):
+    id_principio: UUID
+    nombre: str
+    categoria: str
+
+    class Config:
+        orm_mode = True
 
 class MedicamentoInfo(BaseModel):
+    id_medicamento: UUID
     nombre: str
     dosis_concentracion: str
     via_administracion: str
+    codigo_barras: UUID
+    principio_activo: Optional[str] 
 
     class Config:
         orm_mode = True
@@ -44,14 +55,7 @@ class MedicamentoOut(BaseModel):
     nombre: str
     dosis_concentracion: str
     via_administracion: str
-
-    class Config:
-        orm_mode = True
-        
-class PrincipioActivoOut(BaseModel):
-    id_principio: UUID
-    nombre: str
-    categoria: str
+    codigo_barras: UUID
 
     class Config:
         orm_mode = True
