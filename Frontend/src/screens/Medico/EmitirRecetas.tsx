@@ -1,9 +1,9 @@
 import { Button } from "../../components/ui/button";
 import { JSX, useState, useEffect } from "react";
 import { FooterMedico } from "../../components/ui/footer";
-import { usePDF } from "react-to-pdf";
-import Receta from "../../components/ui/receta";
 import BackButton from "../../components/ui/returnButton";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import RecetaPDF from "../../components/ui/receta";
 
 type Principio = {
   id_principio: string;
@@ -25,14 +25,9 @@ export const EmitirRecetas = (): JSX.Element => {
   const [nombre, setNombre] = useState("");
   const [rut, setRut] = useState("");
   const [prescripciones, setPrescripciones] = useState<Prescripcion[]>([]);
-  const [loadingPDF, setLoadingPDF] = useState(false);
   const [showRecetaModal, setShowRecetaModal] = useState(false);
 
-  const { toPDF, targetRef } = usePDF({ filename: "receta.pdf" });
-
-  const rutValido = (r: string) => {
-    return r.trim().length > 9 && r.includes("-");
-  };
+  const rutValido = (r: string) => r.trim().length > 9 && r.includes("-");
 
   useEffect(() => {
     const fetchPrescripciones = async () => {
@@ -42,43 +37,29 @@ export const EmitirRecetas = (): JSX.Element => {
       const token = localStorage.getItem("token") || "";
 
       try {
-        console.log("Buscando paciente con RUT:", rut);
-
         const pacienteRes = await fetch(`${baseURL}/pacientes/rut/${rut}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (!pacienteRes.ok) {
-          const errorText = await pacienteRes.text();
-          console.error("Error paciente:", errorText);
-          throw new Error("Paciente no encontrado");
-        }
+        if (!pacienteRes.ok) throw new Error("Paciente no encontrado");
 
         const paciente = await pacienteRes.json();
         setNombre(paciente.nombre);
 
-        const prescripcionesRes = await fetch(`${baseURL}/prescripcion/paciente/${paciente.id_paciente}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const prescripcionesRes = await fetch(
+          `${baseURL}/prescripcion/paciente/${paciente.id_paciente}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
-        if (!prescripcionesRes.ok) {
-          const errorText = await prescripcionesRes.text();
-          console.error("Error prescripciones:", errorText);
+        if (!prescripcionesRes.ok)
           throw new Error("No se pudieron obtener prescripciones");
-        }
 
         const prescripcionesData = await prescripcionesRes.json();
-        console.log("Prescripciones recibidas:", prescripcionesData);
-
         setPrescripciones(prescripcionesData);
         setPrescripcionSeleccionada(null);
         setMensajeError("");
       } catch (err) {
-        console.error("Error al obtener paciente o prescripciones:", err);
+        console.error(err);
         setPrescripciones([]);
         setPrescripcionSeleccionada(null);
         setMensajeError("Error al obtener paciente o prescripciones.");
@@ -88,9 +69,13 @@ export const EmitirRecetas = (): JSX.Element => {
     fetchPrescripciones();
   }, [rut]);
 
-  const handleSeleccionPrescripcion = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSeleccionPrescripcion = async (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const idSeleccionado = e.target.value;
-    const seleccionada = prescripciones.find(p => p.id_prescripcion === idSeleccionado) || null;
+    const seleccionada = prescripciones.find(
+      (p) => p.id_prescripcion === idSeleccionado
+    ) || null;
 
     if (!seleccionada) {
       setPrescripcionSeleccionada(null);
@@ -100,28 +85,20 @@ export const EmitirRecetas = (): JSX.Element => {
     const token = localStorage.getItem("token") || "";
 
     try {
-      // Para cada principio, hacemos fetch para obtener su nombre
       const principiosConNombre = await Promise.all(
         seleccionada.principios.map(async (med) => {
-          const res = await fetch(`http://localhost:8080/medicamentos/principios/${med.id_principio}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          const res = await fetch(
+            `http://localhost:8080/medicamentos/principios/${med.id_principio}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
 
           if (!res.ok) {
             console.error(`No se pudo obtener el principio ${med.id_principio}`);
-            return {
-              ...med,
-              nombre: "Nombre no encontrado",
-            };
+            return { ...med, nombre: "Nombre no encontrado" };
           }
 
           const data = await res.json();
-          return {
-            ...med,
-            nombre: data.nombre,
-          };
+          return { ...med, nombre: data.nombre };
         })
       );
 
@@ -129,14 +106,13 @@ export const EmitirRecetas = (): JSX.Element => {
         ...seleccionada,
         principios: principiosConNombre,
       });
-
     } catch (error) {
       console.error("Error al obtener nombres de principios:", error);
-      setPrescripcionSeleccionada(seleccionada); // Sin nombres
+      setPrescripcionSeleccionada(seleccionada); // fallback sin nombres
     }
   };
 
-  const handleEmitirReceta = async () => {
+  const handleEmitirReceta = () => {
     if (!rut || !prescripcionSeleccionada) {
       setMensajeError("Por favor completa todos los campos.");
       return;
@@ -144,14 +120,6 @@ export const EmitirRecetas = (): JSX.Element => {
 
     setMensajeError("");
     setShowRecetaModal(true);
-  };
-
-  const handleDownloadPDF = async () => {
-    setLoadingPDF(true);
-    await new Promise((r) => setTimeout(r, 200)); // pequeña espera para renderizar bien
-    await toPDF();
-    setLoadingPDF(false);
-    setShowRecetaModal(false);
   };
 
   return (
@@ -185,7 +153,6 @@ export const EmitirRecetas = (): JSX.Element => {
             />
           </div>
 
-          {/* Mostrar prescripciones y botón solo si RUT válido y hay prescripciones */}
           {rutValido(rut) && prescripciones.length > 0 && (
             <>
               <div className="mb-6">
@@ -193,7 +160,9 @@ export const EmitirRecetas = (): JSX.Element => {
                   <strong>Nombre del paciente:</strong> {nombre}
                 </p>
 
-                <label className="block text-sm font-medium text-gray-700">Prescripción asociada</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Prescripción asociada
+                </label>
                 <select
                   className="w-full p-3 border border-gray-300 rounded-md"
                   onChange={handleSeleccionPrescripcion}
@@ -217,7 +186,10 @@ export const EmitirRecetas = (): JSX.Element => {
                 <div className="space-y-4 mt-6">
                   <h6 className="font-medium">Detalles de la prescripción</h6>
                   {prescripcionSeleccionada.principios.map((med, index) => (
-                    <div key={index} className="border border-gray-300 p-4 rounded-md">
+                    <div
+                      key={index}
+                      className="border border-gray-300 p-4 rounded-md"
+                    >
                       <p>
                         <strong>Nombre:</strong> {med.nombre}
                       </p>
@@ -237,15 +209,42 @@ export const EmitirRecetas = (): JSX.Element => {
                   Emitir receta
                 </Button>
               </div>
+
+              {/* PDFDownloadLink si hay receta lista */}
+              {showRecetaModal && prescripcionSeleccionada && (
+                <div className="mt-6 text-center">
+                  <PDFDownloadLink
+                    document={
+                      <RecetaPDF
+                        nombrePaciente={nombre}
+                        edad="30"
+                        direccion="Av. Libertador 1234"
+                        ciudad="Santiago"
+                        ci={rut}
+                      />
+                    }
+                    fileName="receta.pdf"
+                  >
+                    {({ loading }) => (
+                      <Button className="mt-2">
+                        {loading ? "Generando PDF..." : "Descargar PDF"}
+                      </Button>
+                    )}
+                  </PDFDownloadLink>
+                </div>
+              )}
             </>
           )}
 
-          {/* Mensajes para usuario */}
           {rut && !rutValido(rut) && (
-            <p className="text-red-600 text-center">Por favor ingresa un RUT válido.</p>
+            <p className="text-red-600 text-center">
+              Por favor ingresa un RUT válido.
+            </p>
           )}
           {rutValido(rut) && !mensajeError && prescripciones.length === 0 && (
-            <p className="text-gray-600 text-center">No hay prescripciones para este paciente.</p>
+            <p className="text-gray-600 text-center">
+              No hay prescripciones para este paciente.
+            </p>
           )}
           {mensajeError && (
             <div className="mb-4 pt-4">
@@ -255,40 +254,6 @@ export const EmitirRecetas = (): JSX.Element => {
         </div>
 
         <FooterMedico />
-
-        {/* Modal para mostrar Receta */}
-        {showRecetaModal && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div
-              className="bg-white p-6 rounded shadow w-full max-w-[900px] relative overflow-y-auto max-h-[90vh]"
-            >
-              <h2 className="text-xl font-semibold mb-4">Vista previa de la receta</h2>
-
-              <div
-                ref={targetRef}
-                className="border p-4"
-                style={{ width: "220mm", maxWidth: "150%" }}
-              >
-                <Receta
-                  nombrePaciente={nombre || "Nombre no definido"}
-                  edad="30"
-                  direccion="Av. Libertador 1234"
-                  ciudad="Santiago"
-                  ci={rut || "RUT no definido"}
-                />
-              </div>
-
-              <div className="flex justify-end mt-4 gap-2">
-                <Button onClick={handleDownloadPDF} disabled={loadingPDF}>
-                  {loadingPDF ? "Generando PDF..." : "Descargar PDF"}
-                </Button>
-                <Button variant="secondary" onClick={() => setShowRecetaModal(false)}>
-                  Cancelar
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
