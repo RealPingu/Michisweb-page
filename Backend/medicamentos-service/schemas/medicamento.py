@@ -41,6 +41,7 @@ class LoteOut(BaseModel):
     lote: str
     fecha_vencimiento: datetime
     cantidad: int
+    cantidad_reservada: int
     cantidad_defectuosa: int
     cantidad_en_idea: int
     cantidad_en_estado: int

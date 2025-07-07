@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {  SearchIcon } from "lucide-react";
 import BackButton from "../../../components/ui/returnButton";
 import { Card, CardContent } from "../../../components/ui/card";
@@ -17,34 +17,79 @@ interface Medication {
 export const BajaMedicamentos = (): JSX.Element => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [medications, setMedications] = useState<Medication[]>([]);
 
-  // Sample medication data - replace with your actual data source
-  const medications: Medication[] = [
-    {
-      id: 1,
-      name: "Paracetamol",
-      description: "500mg - 20 comprimidos",
-      stock: 150,
-    },
-    {
-      id: 2,
-      name: "Ibuprofeno",
-      description: "400mg - 30 comprimidos",
-      stock: 200,
-    },
-    {
-      id: 3,
-      name: "Aspirina",
-      description: "100mg - 40 comprimidos",
-      stock: 175,
-    },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem("token") || "";
+      try {
+        const res = await fetch("http://localhost:8080/medicamentos", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const meds = await res.json();
 
-  const filteredMeds = medications.filter(
-    (med) =>
-      med.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      med.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+        const medsWithStock: Medication[] = await Promise.all(
+          meds.map(async (med: any) => {
+            try {
+              const loteRes = await fetch(
+                `http://localhost:8080/medicamentos/${med.id_medicamento}/lotes`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              );
+
+              if (!loteRes.ok) {
+                console.warn(`Lotes no encontrados para medicamento: ${med.nombre}`);
+                return null;
+              }
+
+              const lotes = await loteRes.json();
+              
+              const totalStock = lotes.reduce((acc: number, lote: any) => {                
+                const usable =
+                  Number(lote.cantidad) -
+                  (Number(lote.cantidad_reservada) +
+                    Number(lote.cantidad_defectuosa) +
+                    Number(lote.cantidad_en_idea) +
+                    Number(lote.cantidad_en_estado) +
+                    Number(lote.cantidad_envase_roto));
+                return acc + (usable > 0 ? usable : 0);
+              }, 0);
+
+              return {
+                id: med.id_medicamento,
+                name: med.nombre,
+                description: `${med.dosis_concentracion || "s/dosis"} - ${med.via_administracion}`,
+                stock: totalStock,
+              };
+            } catch (err) {
+              console.error(`Error con medicamento ${med.nombre}`, err);
+              return null;
+            }
+          })
+        );
+
+        const filteredMeds = medsWithStock.filter((m) => m !== null);
+        setMedications(filteredMeds);
+      } catch (err) {
+        console.error("Error al cargar medicamentos:", err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const filteredMeds = medications
+    .filter(
+      (med) =>
+        med.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        med.description.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .slice(0, searchTerm ? undefined : 5); // Solo muestra 5 si no hay búsqueda
 
   return (
     <div className="flex justify-center w-full min-h-screen bg-white">
@@ -90,9 +135,7 @@ export const BajaMedicamentos = (): JSX.Element => {
                       <h2 className="text-lg font-semibold text-[#1E1E1E]">
                         {med.name}
                       </h2>
-                      <p className="text-sm text-[#757575]">
-                        {med.description}
-                      </p>
+                      <p className="text-sm text-[#757575]">{med.description}</p>
                       <p className="text-sm font-medium text-[#2C2C2C] mt-1">
                         Stock: {med.stock} unidades
                       </p>
