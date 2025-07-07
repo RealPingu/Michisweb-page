@@ -1,15 +1,20 @@
-type Medicamento = {
-  nombre: string;
-  stock: number;
+type LoteDetalle = {
+  lote: string;
+  fecha_vencimiento: string;
+  cantidad: number;
+  cantidad_defectuosa: number;
+  cantidad_en_idea: number;
+  cantidad_en_estado: number;
+  cantidad_envase_roto: number;
+  nombre_medicamento: string;
   concentracion: string;
-  laboratorio: string;
-  vencimiento: string;
+  via_administracion: string;
 };
 
 type Ingrediente = {
   name: string;
   description: string;
-  medicamentos: Medicamento[];
+  lotes: LoteDetalle[];
 };
 
 const InformePDF = ({ ingrediente }: { ingrediente: Ingrediente }) => {
@@ -23,32 +28,36 @@ const InformePDF = ({ ingrediente }: { ingrediente: Ingrediente }) => {
         backgroundColor: "white",
       }}
     >
-      <h1 style={{ fontSize: "20pt", marginBottom: "16px" }}>
-        Informe de Stock
-      </h1>
-      <h2 style={{ fontSize: "16pt", marginBottom: "8px" }}>
-        {ingrediente.name}
-      </h2>
+      <h1 style={{ fontSize: "20pt", marginBottom: "16px" }}>Informe de Stock</h1>
+      <h2 style={{ fontSize: "16pt", marginBottom: "8px" }}>{ingrediente.name}</h2>
       <p style={{ marginBottom: "24px" }}>{ingrediente.description}</p>
 
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr>
-            <th style={thStyle}>Nombre</th>
-            <th style={thStyle}>Stock</th>
+            <th style={thStyle}>Medicamento</th>
             <th style={thStyle}>Concentración</th>
-            <th style={thStyle}>Laboratorio</th>
-            <th style={thStyle}>Vencimiento</th>
+            <th style={thStyle}>Vía</th>
+            <th style={thStyle}>Lote</th>
+            <th style={thStyle}>Stock</th>
+            <th style={thStyle}>Vencido</th>
+            <th style={thStyle}>Mal estado</th>
+            <th style={thStyle}>Envase roto</th>
+            <th style={thStyle}>Fecha Vencimiento</th>
           </tr>
         </thead>
         <tbody>
-          {ingrediente.medicamentos.map((med, idx) => (
+          {ingrediente.lotes.map((lote, idx) => (
             <tr key={idx}>
-              <td style={tdStyle}>{med.nombre}</td>
-              <td style={tdStyle}>{med.stock}</td>
-              <td style={tdStyle}>{med.concentracion}</td>
-              <td style={tdStyle}>{med.laboratorio}</td>
-              <td style={tdStyle}>{med.vencimiento}</td>
+              <td style={tdStyle}>{lote.nombre_medicamento}</td>
+              <td style={tdStyle}>{lote.concentracion}</td>
+              <td style={tdStyle}>{lote.via_administracion}</td>
+              <td style={tdStyle}>{lote.lote}</td>
+              <td style={tdStyle}>{lote.cantidad}</td>
+              <td style={tdStyle}>{lote.cantidad_en_estado}</td>
+              <td style={tdStyle}>{lote.cantidad_en_idea}</td>
+              <td style={tdStyle}>{lote.cantidad_envase_roto}</td>
+              <td style={tdStyle}>{lote.fecha_vencimiento}</td>
             </tr>
           ))}
         </tbody>

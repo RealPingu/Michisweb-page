@@ -1,81 +1,78 @@
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useEffect } from "react";
 import { Button } from "../../../../components/ui/button";
 import { usePDF } from "react-to-pdf";
-import InformePDF from "../../../../components/ui/informepdf";
 import BackButton from "../../../../components/ui/returnButton";
 import { FooterFuncionarioStock } from "../../../../components/ui/footer";
+import InformePDF from "../../../../components/ui/informepdf";
 
-const mockIngredientes = [
-  {
-    id: 1,
-    name: "Ácido Acetilsalicílico",
-    description: "Antiinflamatorio no esteroideo (AINE)",
-    medicamentos: [
-      {
-        nombre: "Aspirina",
-        stock: 150,
-        concentracion: "500 mg",
-        laboratorio: "Bayer",
-        vencimiento: "2026-03-15",
-      },
-      {
-        nombre: "Bufferin",
-        stock: 100,
-        concentracion: "325 mg",
-        laboratorio: "Lion Corp",
-        vencimiento: "2025-10-10",
-      },
-      {
-        nombre: "Ecotrin",
-        stock: 200,
-        concentracion: "81 mg",
-        laboratorio: "Prestige Brands",
-        vencimiento: "2026-01-05",
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "Omeprazol",
-    description: "Inhibidor de la bomba de protones",
-    medicamentos: [
-      {
-        nombre: "Losec",
-        stock: 100,
-        concentracion: "20 mg",
-        laboratorio: "AstraZeneca",
-        vencimiento: "2025-11-10",
-      },
-      {
-        nombre: "Omeprazol MK",
-        stock: 180,
-        concentracion: "20 mg",
-        laboratorio: "Tecnoquímicas",
-        vencimiento: "2026-02-01",
-      },
-    ],
-  },
-  // Puedes continuar agregando los demás ingredientes si lo necesitas
-];
+interface LoteDetalle {
+  lote: string;
+  fecha_vencimiento: string;
+  cantidad: number;
+  cantidad_defectuosa: number;
+  cantidad_en_idea: number;
+  cantidad_en_estado: number;
+  cantidad_envase_roto: number;
+  nombre_medicamento: string;
+  concentracion: string;
+  via_administracion: string;
+}
 
 export const Informes = () => {
   const [searchParams] = useSearchParams();
-  const id = parseInt(searchParams.get("id") || "", 10);
-  const ingrediente = mockIngredientes.find((i) => i.id === id);
+  const id = searchParams.get("id");
+  const { toPDF, targetRef } = usePDF({ filename: "informe-principio-activo.pdf", page: { format: "A4" } });
 
-  const { toPDF, targetRef } = usePDF({
-    filename: "informe-principio-activo.pdf",
-    page: { format: "A4" },
-  });
+  const [titulo, setTitulo] = useState({ nombre: "", categoria: "" });
+  const [lotesDetalle, setLotesDetalle] = useState<LoteDetalle[]>([]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
 
-  if (!ingrediente) {
-    return <div className="p-4 text-center">Ingrediente no encontrado</div>;
-  }
+    const fetchData = async () => {
+      const token = localStorage.getItem("token") || "";
+
+      try {
+        const res = await fetch(`http://localhost:8080/medicamentos/principios/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        setTitulo({ nombre: data.nombre, categoria: data.categoria });
+
+        const loteList: LoteDetalle[] = [];
+
+        for (const med of data.medicamentos) {
+          const resLotes = await fetch(
+            `http://localhost:8080/medicamentos/${med.id_medicamento}/lotes`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          const lotes = await resLotes.json();
+
+          for (const lote of lotes) {
+            loteList.push({
+              lote: lote.lote,
+              fecha_vencimiento: lote.fecha_vencimiento.split("T")[0],
+              cantidad: lote.cantidad,
+              cantidad_defectuosa: lote.cantidad_defectuosa,
+              cantidad_en_idea: lote.cantidad_en_idea,
+              cantidad_en_estado: lote.cantidad_en_estado,
+              cantidad_envase_roto: lote.cantidad_envase_roto,
+              nombre_medicamento: med.nombre,
+              concentracion: med.dosis_concentracion,
+              via_administracion: med.via_administracion,
+            });
+          }
+        }
+
+        setLotesDetalle(loteList);
+      } catch (error) {
+        console.error("Error cargando informe:", error);
+      }
+    };
+
+    if (id) fetchData();
+  }, [id]);
 
   return (
     <div className="flex justify-center w-full min-h-screen bg-white">
@@ -95,33 +92,26 @@ export const Informes = () => {
         {/* Body */}
         <div className="pt-36 px-4 pb-32 space-y-6">
           <div>
-            <h2 className="text-lg font-bold">{ingrediente.name}</h2>
-            <p className="text-sm text-gray-600">{ingrediente.description}</p>
+            <h2 className="text-lg font-bold">{titulo.nombre}</h2>
+            <p className="text-sm text-gray-600">{titulo.categoria}</p>
           </div>
+
           <div className="space-y-4">
-            {ingrediente.medicamentos.map((med, idx) => (
-              <div
-                key={idx}
-                className="border border-gray-300 p-4 rounded-md space-y-1 text-sm"
-              >
-                <p>
-                  <strong>Nombre:</strong> {med.nombre}
-                </p>
-                <p>
-                  <strong>Stock:</strong> {med.stock} unidades
-                </p>
-                <p>
-                  <strong>Concentración:</strong> {med.concentracion}
-                </p>
-                <p>
-                  <strong>Laboratorio:</strong> {med.laboratorio}
-                </p>
-                <p>
-                  <strong>Fecha de vencimiento:</strong> {med.vencimiento}
-                </p>
+            {lotesDetalle.map((lote, idx) => (
+              <div key={idx} className="border border-gray-300 p-4 rounded-md space-y-1 text-sm">
+                <p><strong>Medicamento:</strong> {lote.nombre_medicamento}</p>
+                <p><strong>Concentración:</strong> {lote.concentracion}</p>
+                <p><strong>Vía de administración:</strong> {lote.via_administracion}</p>
+                <p><strong>Lote:</strong> {lote.lote}</p>
+                <p><strong>Stock total:</strong> {lote.cantidad} unidades</p>
+                <p><strong>Vencido:</strong> {lote.cantidad_en_estado}</p>
+                <p><strong>Mal estado:</strong> {lote.cantidad_en_idea}</p>
+                <p><strong>Envase roto:</strong> {lote.cantidad_envase_roto}</p>
+                <p><strong>Fecha de vencimiento:</strong> {lote.fecha_vencimiento}</p>
               </div>
             ))}
           </div>
+
           <div className="text-center">
             <Button size="lg" className="w-full" onClick={() => toPDF()}>
               Exportar PDF
@@ -129,14 +119,12 @@ export const Informes = () => {
           </div>
         </div>
 
-        {/* Contenido oculto para PDF */}
-        <div
-          style={{ position: "absolute", top: "-9999px", left: "-9999px" }}
-          ref={targetRef}
-        >
-          <InformePDF ingrediente={ingrediente} />
+        {/* PDF HIDDEN RENDER */}
+        <div style={{ position: "absolute", top: "-9999px", left: "-9999px" }} ref={targetRef}>
+          <InformePDF ingrediente={{ name: titulo.nombre, description: titulo.categoria, lotes: lotesDetalle }} />
         </div>
-        <FooterFuncionarioStock></FooterFuncionarioStock>
+
+        <FooterFuncionarioStock />
       </div>
     </div>
   );

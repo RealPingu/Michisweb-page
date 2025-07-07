@@ -1,19 +1,14 @@
-import { useState } from "react";
-import {
-  ArrowLeftCircleIcon,
-  SearchIcon,
-  ChevronRightIcon,
-} from "lucide-react";
-import { Button } from "../../../components/ui/button";
+import { JSX } from "react";
+import { useState, useEffect } from "react";
+import { SearchIcon, ChevronRightIcon } from "lucide-react";
 import { Card, CardContent } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { useNavigate } from "react-router-dom";
-import { JSX } from "react";
 import { FooterFuncionarioStock } from "../../../components/ui/footer";
 import BackButton from "../../../components/ui/returnButton";
 
 interface ActiveIngredient {
-  id: number;
+  id: string;
   name: string;
   description: string;
   medicationCount: number;
@@ -23,38 +18,85 @@ interface ActiveIngredient {
 export const EmitirInformes = (): JSX.Element => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeIngredients, setActiveIngredients] = useState<ActiveIngredient[]>([]);
 
-  // Sample data - replace with your actual data source
-  const activeIngredients: ActiveIngredient[] = [
-    {
-      id: 1,
-      name: "Ácido Acetilsalicílico",
-      description: "Antiinflamatorio no esteroideo (AINE)",
-      medicationCount: 3,
-      totalStock: 450,
-    },
-    {
-      id: 2,
-      name: "Omeprazol",
-      description: "Inhibidor de la bomba de protones",
-      medicationCount: 2,
-      totalStock: 280,
-    },
-    {
-      id: 3,
-      name: "Metformina",
-      description: "Antidiabético oral",
-      medicationCount: 4,
-      totalStock: 600,
-    },
-    {
-      id: 4,
-      name: "Amoxicilina",
-      description: "Antibiótico betalactámico",
-      medicationCount: 3,
-      totalStock: 320,
-    },
-  ];
+  useEffect(() => {
+    const fetchPrincipios = async () => {
+      const token = localStorage.getItem("token") || "";
+
+      try {
+        const res = await fetch("http://localhost:8080/medicamentos/principios", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const principios = await res.json();
+
+        const detailed = await Promise.all(
+          principios.map(async (principio: any) => {
+            try {
+              const detalleRes = await fetch(
+                `http://localhost:8080/medicamentos/principios/${principio.id_principio}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              );
+
+              if (!detalleRes.ok) {
+                throw new Error(`Detalle no encontrado para ${principio.nombre}`);
+              }
+
+              const detalle = await detalleRes.json();
+              let totalStock = 0;
+
+              for (const med of detalle.medicamentos) {
+                const lotesRes = await fetch(
+                  `http://localhost:8080/medicamentos/${med.id_medicamento}/lotes`,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                    },
+                  }
+                );
+
+                if (!lotesRes.ok) {
+                  throw new Error(`Error al obtener lotes de ${med.nombre}`);
+                }
+
+                const lotes = await lotesRes.json();
+                const stock = lotes.reduce(
+                  (acc: number, lote: any) => acc + (lote.cantidad || 0),
+                  0
+                );
+                totalStock += stock;
+              }
+
+              return {
+                id: principio.id_principio,
+                name: principio.nombre,
+                description: principio.categoria,
+                medicationCount: detalle.medicamentos_diferentes,
+                totalStock,
+              };
+            } catch (error) {
+              console.error("Error procesando principio activo:", principio.nombre, error);
+              return null;
+            }
+          })
+        );
+
+        const filtered = detailed.filter((item) => item !== null) as ActiveIngredient[];
+        setActiveIngredients(filtered);
+      } catch (err) {
+        console.error("Error general al cargar principios activos:", err);
+      }
+    };
+
+    fetchPrincipios();
+  }, []);
 
   const filteredIngredients = activeIngredients.filter(
     (ingredient) =>
@@ -96,9 +138,7 @@ export const EmitirInformes = (): JSX.Element => {
                 key={ingredient.id}
                 className="w-full cursor-pointer hover:shadow-md transition-shadow"
                 onClick={() =>
-                  navigate(
-                    `/funcionario/stock/emitir-informes/informes?id=${ingredient.id}`
-                  )
+                  navigate(`/funcionario/stock/emitir-informes/informes?id=${ingredient.id}`)
                 }
               >
                 <CardContent className="p-4">
@@ -126,7 +166,8 @@ export const EmitirInformes = (): JSX.Element => {
             ))}
           </div>
         </div>
-        <FooterFuncionarioStock></FooterFuncionarioStock>
+
+        <FooterFuncionarioStock />
       </div>
     </div>
   );
