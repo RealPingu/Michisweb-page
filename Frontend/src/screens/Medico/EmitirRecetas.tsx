@@ -122,6 +122,33 @@ export const EmitirRecetas = (): JSX.Element => {
     setShowRecetaModal(true);
   };
 
+  const handleSolicitarRetiro = async () => {
+    if (!prescripcionSeleccionada) {
+      setMensajeError("Debes seleccionar una prescripción primero.");
+      return;
+    }
+
+    const token = localStorage.getItem("token") || "";
+    const id = prescripcionSeleccionada.id_prescripcion;
+
+    try {
+      const res = await fetch(`http://localhost:8080/prescripcion/agregar-receta/${id}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) throw new Error("No se pudo emitir la receta");
+
+      const data = await res.json();
+      console.log("Receta creada:", data);
+
+      alert("✅ Receta enviada a farmacia CESFAM correctamente");
+    } catch (error) {
+      console.error("Error al emitir receta:", error);
+      alert("❌ Error al emitir receta a CESFAM");
+    }
+  };
+
   return (
     <div className="flex justify-center w-full min-h-screen bg-white">
       <div className="relative w-full max-w-md mx-auto bg-white min-h-screen">
@@ -204,13 +231,19 @@ export const EmitirRecetas = (): JSX.Element => {
                 </div>
               )}
 
-              <div className="text-center mt-4">
+              <div className="text-center mt-4 space-y-2">
+                <Button
+                  className="w-full"
+                  onClick={handleSolicitarRetiro}
+                >
+                  Solicitar retiro en farmacia CESFAM
+                </Button>
+
                 <Button size="lg" className="w-full" onClick={handleEmitirReceta}>
-                  Emitir receta
+                  Emitir receta PDF
                 </Button>
               </div>
 
-              {/* PDFDownloadLink si hay receta lista */}
               {showRecetaModal && prescripcionSeleccionada && (
                 <div className="mt-6 text-center">
                   <PDFDownloadLink

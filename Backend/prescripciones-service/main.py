@@ -1,8 +1,8 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
-from models import Base, Prescripcion, PrescripcionPrincipio, Receta, PrincipioActivo
+from models import Base, Prescripcion, PrescripcionPrincipio, Receta, PrincipioActivo, Entrega
 from database import engine, get_session
 from pydantic import BaseModel
 from typing import List, Optional
@@ -192,13 +192,19 @@ async def agregar_receta(id_prescripcion: uuid.UUID, db: AsyncSession = Depends(
 
 
 # Obtener todas las recetas
+# Obtener todas las recetas
 @app.get("/receta")
 async def obtener_recetas(db: AsyncSession = Depends(get_session)):
     result = await db.execute(
         select(Receta)
         .options(
-          selectinload(Receta.medico),
-          selectinload(Receta.paciente)
+            selectinload(Receta.medico),
+            selectinload(Receta.paciente),
+            selectinload(Receta.prescripcion)
+                .selectinload(Prescripcion.principios)
+                .selectinload(PrescripcionPrincipio.principio),
+            selectinload(Receta.entrega),  # Agregado
+            selectinload(Receta.entrega).selectinload(Entrega.funcionario)  # Para obtener nombre funcionario
         )
     )
     recetas = result.scalars().all()
@@ -212,9 +218,29 @@ async def obtener_recetas(db: AsyncSession = Depends(get_session)):
             "id_medico": r.id_medico,
             "nombre_medico": r.medico.nombre,
             "fecha_emision": r.fecha_emision,
-            "estado": r.estado
+            "estado": r.estado,
+            "principios": [
+                {
+                    "id_principio": pp.id_principio,
+                    "nombre": pp.principio.nombre,
+                    "categoria": pp.principio.categoria,
+                    "duracion": pp.duracion,
+                    "frecuencia": pp.frecuencia
+                }
+                for pp in r.prescripcion.principios
+            ] if r.prescripcion else [],
+            # Información de entrega (puede ser None)
+            "entrega": {
+                "fecha": r.entrega.fecha if r.entrega else None,
+                "estado": r.entrega.estado if r.entrega else None,
+                "nombre_retiro": r.entrega.nombre_retiro if r.entrega else None,
+                "rut_retiro": r.entrega.rut_retiro if r.entrega else None,
+                "id_funcionario": r.entrega.id_funcionario if r.entrega else None,
+                "nombre_funcionario": r.entrega.funcionario.nombre if r.entrega and r.entrega.funcionario else None
+            }
         } for r in recetas
     ]
+
 
 # Obtener 1 receta
 @app.get("/receta/{id_receta}")
@@ -223,8 +249,11 @@ async def obtener_receta(id_receta: uuid.UUID, db: AsyncSession = Depends(get_se
         select(Receta)
         .where(Receta.id_receta == id_receta)
         .options(
-          selectinload(Receta.medico),
-          selectinload(Receta.paciente)
+            selectinload(Receta.medico),
+            selectinload(Receta.paciente),
+            selectinload(Receta.prescripcion)
+            .selectinload(Prescripcion.principios)
+            .selectinload(PrescripcionPrincipio.principio)
         )
     )
     r = result.scalar_one_or_none()
@@ -233,12 +262,57 @@ async def obtener_receta(id_receta: uuid.UUID, db: AsyncSession = Depends(get_se
         raise HTTPException(status_code=404, detail="Receta no encontrada")
 
     return {
-            "id_receta": r.id_receta,
-            "id_prescripcion": r.id_prescripcion,
-            "id_paciente": r.id_paciente,
-            "nombre_paciente": r.paciente.nombre,
-            "id_medico": r.id_medico,
-            "nombre_medico": r.medico.nombre,
-            "fecha_emision": r.fecha_emision,
-            "estado": r.estado
-        }
+        "id_receta": r.id_receta,
+        "id_prescripcion": r.id_prescripcion,
+        "id_paciente": r.id_paciente,
+        "nombre_paciente": r.paciente.nombre,
+        "id_medico": r.id_medico,
+        "nombre_medico": r.medico.nombre,
+        "fecha_emision": r.fecha_emision,
+        "estado": r.estado,
+        "principios": [
+            {
+                "id_principio": pp.id_principio,
+                "nombre": pp.principio.nombre,
+                "categoria": pp.principio.categoria,
+                "duracion": pp.duracion,
+                "frecuencia": pp.frecuencia
+            }
+            for pp in r.prescripcion.principios
+        ] if r.prescripcion else []
+    }
+
+
+@app.post("/receta/entregar/{id_receta}")
+async def entregar_receta(
+    id_receta: uuid.UUID,
+    nombre: str = Body(...),
+    rut: str = Body(...),
+    id_funcionario: uuid.UUID = Body(...),
+    db: AsyncSession = Depends(get_session)
+):
+    # Verificar que la receta exista
+    result = await db.execute(select(Receta).where(Receta.id_receta == id_receta))
+    receta = result.scalar_one_or_none()
+
+    if not receta:
+        raise HTTPException(status_code=404, detail="Receta no encontrada")
+
+    # Crear entrada en la tabla Entrega
+    entrega = Entrega(
+        id_receta=id_receta,
+        id_funcionario=id_funcionario,
+        fecha=dt.datetime.now(dt.timezone.utc),
+        estado="entregada",
+        nombre_retiro=nombre,
+        rut_retiro=rut,
+    )
+    db.add(entrega)
+
+    # También puedes actualizar el estado de la receta si deseas:
+    receta.estado = "entregada"
+
+    await db.commit()
+    return {"mensaje": "Entrega registrada correctamente"}
+
+

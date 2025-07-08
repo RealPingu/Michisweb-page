@@ -68,7 +68,7 @@ LIMIT 1;
 
 -- Crear Receta
 INSERT INTO Receta (ID_prescripcion, ID_paciente, ID_medico, fecha_emision, estado)
-SELECT pr.ID_prescripcion, pa.ID_paciente, pr.ID_medico, '2025-05-20 09:00:00', 'emitida'
+SELECT pr.ID_prescripcion, pa.ID_paciente, pr.ID_medico, '2025-05-20 09:00:00', 'pendiente'
 FROM Prescripcion pr
 JOIN Paciente pa ON pa.nombre = 'Mateo Silva'
 LIMIT 1;
