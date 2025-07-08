@@ -25,10 +25,6 @@ export const FooterFuncionarioStock = () => {
           <Package className="w-5 h-5" />
           <span>Ingreso</span>
         </div>
-        <div className="flex flex-col items-center hover:text-black cursor-pointer" onClick={() => navigate("/funcionario/stock/registrar-entrega")}>
-          <Truck className="w-5 h-5" />
-          <span>Entrega</span>
-        </div>
         <div className="flex flex-col items-center hover:text-black cursor-pointer" onClick={() => navigate("/funcionario/stock/emitir-informes")}>
           <FileText className="w-5 h-5" />
           <span>Informe</span>

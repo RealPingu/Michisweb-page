@@ -11,9 +11,8 @@ export const MenuStock = (): JSX.Element => {
 
   const menuOptions = [
     { id: 1, label: "Ingresar productos", path: "/funcionario/stock/ingresar-medicamentos", icon: Package },
-    { id: 2, label: "Registrar entregas", path: "/funcionario/stock/registrar-entrega", icon: Truck },
-    { id: 3, label: "Emitir informes", path: "/funcionario/stock/emitir-informes", icon: FileText },
-    { id: 4, label: "Registrar bajas", path: "/funcionario/stock/baja-medicamentos", icon: ArrowDownCircle },
+    { id: 2, label: "Emitir informes", path: "/funcionario/stock/emitir-informes", icon: FileText },
+    { id: 3, label: "Registrar bajas", path: "/funcionario/stock/baja-medicamentos", icon: ArrowDownCircle },
   ];
   
 
