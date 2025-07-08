@@ -123,6 +123,7 @@ class PrescripcionPrincipio(Base):
 
     #prescripciones-service
     prescripcion = relationship("Prescripcion", back_populates="principios")
+    principio = relationship("PrincipioActivo")
 
 
 class Receta(Base):
@@ -139,6 +140,7 @@ class Receta(Base):
     medico = relationship("Usuario", foreign_keys=[id_medico])
     paciente = relationship("Paciente", foreign_keys=[id_paciente])
     prescripcion = relationship("Prescripcion", foreign_keys=[id_prescripcion])
+    entrega = relationship("Entrega", back_populates="receta", uselist=False)
 
 
 class Reserva(Base):
@@ -175,3 +177,6 @@ class Entrega(Base):
     estado = Column(String(50))
     rut_retiro = Column(String(20))
     nombre_retiro = Column(String(100))
+
+    receta = relationship("Receta", back_populates="entrega")
+    funcionario = relationship("Usuario")

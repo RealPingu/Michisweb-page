@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Clock, ChevronRight, X } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Card, CardContent } from '../../../components/ui/card';
@@ -8,7 +8,7 @@ import { FooterFuncionarioPrescripciones } from '../../../components/ui/footer';
 
 export const PrescripcionesPendientes = () => {
   interface Prescription {
-    id: number;
+    id: string;
     rut: string;
     timeAgo: string;
     medications: string[];
@@ -17,48 +17,61 @@ export const PrescripcionesPendientes = () => {
     entregadoPorRUT?: string;
   }
 
-  const [prescriptions, setPrescriptions] = useState<Prescription[]>([
-    {
-      id: 1,
-      rut: '12.345.678-9',
-      timeAgo: '6 min',
-      medications: [
-        'Amoxicilina 500 mg 3 días cada 8 horas',
-        'Loratadina 10 mg 7 días cada 1 día'
-      ],
-      status: 'pending'
-    },
-    {
-      id: 2,
-      rut: '9.876.543-2',
-      timeAgo: '23 min',
-      medications: [
-        'Sertralina 100 mg permanente cada 1 día',
-        'Escopolamina 3 mg permanente cada 1 día'
-      ],
-      status: 'pending'
-    },
-    {
-      id: 3,
-      rut: '20.123.456-K',
-      timeAgo: '48 min',
-      medications: [
-        'Metformina 1000 mg permanente cada 1 día'
-      ],
-      status: 'delivered',
-      entregadoPorNombre: 'Carlos Pérez',
-      entregadoPorRUT: '11.111.111-1'
-    },
-  ]);
-
+  const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
   const [activeTab, setActiveTab] = useState<'pending' | 'delivered'>('pending');
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedPrescriptionId, setSelectedPrescriptionId] = useState<number | null>(null);
+  const [selectedPrescriptionId, setSelectedPrescriptionId] = useState<string | null>(null);
   const [nombre, setNombre] = useState('');
   const [rutInput, setRutInput] = useState('');
   const [errors, setErrors] = useState<{ nombre?: string; rut?: string }>({});
 
-  const openModal = (id: number) => {
+  const token = localStorage.getItem("token") || "";
+
+  useEffect(() => {
+    const fetchPrescriptions = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/receta', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        if (!response.ok) throw new Error('Error al obtener recetas');
+
+        const data = await response.json();
+
+        const parsed: Prescription[] = data.map((r: any) => ({
+          id: r.id_receta,
+          rut: r.nombre_paciente,
+          timeAgo: calcularTiempoDesde(r.fecha_emision),
+          medications: r.principios?.map((p: any) => `${p.nombre} - ${p.duracion}, ${p.frecuencia}`) || [],
+          status: r.estado === 'pendiente' ? 'pending' : 'delivered',
+          entregadoPorNombre: r.entrega?.nombre_retiro ?? '',
+          entregadoPorRUT: r.entrega?.rut_retiro ?? ''
+        }));
+
+        setPrescriptions(parsed);
+      } catch (error) {
+        console.error('Error al cargar recetas', error);
+      }
+    };
+
+    fetchPrescriptions();
+  }, [token]);
+
+  const calcularTiempoDesde = (fechaEmision: string) => {
+    const fechaUTC = fechaEmision.endsWith("Z") ? fechaEmision : `${fechaEmision}Z`;
+    const fecha = new Date(fechaUTC).getTime();
+    const ahora = new Date().getTime();
+    let diffMin = Math.floor((ahora - fecha) / 60000);
+    if (diffMin < 0) diffMin = 0;
+    if (diffMin < 60) return `${diffMin} min`;
+    const diffHoras = Math.floor(diffMin / 60);
+    if (diffHoras < 24) return `${diffHoras} h`;
+    const diffDias = Math.floor(diffHoras / 24);
+    return `${diffDias} d`;
+  };
+
+  const openModal = (id: string) => {
     setSelectedPrescriptionId(id);
     setModalOpen(true);
   };
@@ -70,7 +83,7 @@ export const PrescripcionesPendientes = () => {
     setErrors({});
   };
 
-  const handleDeliveryConfirmed = () => {
+  const handleDeliveryConfirmed = async () => {
     const newErrors: typeof errors = {};
     if (!nombre.trim()) newErrors.nombre = 'Este campo es obligatorio';
     if (!rutInput.trim()) newErrors.rut = 'Este campo es obligatorio';
@@ -80,20 +93,43 @@ export const PrescripcionesPendientes = () => {
       return;
     }
 
-    setPrescriptions(prev =>
-      prev.map(p =>
-        p.id === selectedPrescriptionId
-          ? {
-              ...p,
-              status: 'delivered',
-              entregadoPorNombre: nombre,
-              entregadoPorRUT: rutInput
-            }
-          : p
-      )
-    );
+    try {
+      const response = await fetch(
+        `http://localhost:8080/receta/entregar/${selectedPrescriptionId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            nombre,
+            rut: rutInput,
+            id_funcionario: localStorage.getItem('userId') // Asegúrate de tener esto guardado
+          })
+        }
+      );
+      if (!response.ok) {
+        throw new Error('Error al marcar como entregada');
+      }
 
-    closeModal();
+      setPrescriptions(prev =>
+        prev.map(p =>
+          p.id === selectedPrescriptionId
+            ? {
+                ...p,
+                status: 'delivered',
+                entregadoPorNombre: nombre,
+                entregadoPorRUT: rutInput
+              }
+            : p
+        )
+      );
+
+      closeModal();
+    } catch (error) {
+      console.error("Error al confirmar entrega", error);
+    }
   };
 
   const filteredPrescriptions = prescriptions.filter(p => p.status === activeTab);
@@ -101,8 +137,6 @@ export const PrescripcionesPendientes = () => {
   return (
     <div className="flex justify-center w-full min-h-screen bg-white">
       <div className="relative w-full max-w-md mx-auto bg-white min-h-screen pb-16">
-
-        {/* Encabezado */}
         <div className="fixed top-0 left-0 right-0 z-10 bg-white px-4 pt-4 pb-2">
           <div className="relative max-w-md mx-auto">
             <BackButton to="/funcionario/prescripciones" />
@@ -110,7 +144,6 @@ export const PrescripcionesPendientes = () => {
               <h1 className="text-xl font-semibold">Entrega prescripciones</h1>
             </div>
 
-            {/* Pestañas */}
             <div className="flex space-x-4 justify-center">
               <Button
                 variant={activeTab === 'pending' ? 'default' : 'outline'}
@@ -128,7 +161,6 @@ export const PrescripcionesPendientes = () => {
           </div>
         </div>
 
-        {/* Lista de prescripciones */}
         <div className="pt-36 pb-4 px-4">
           {filteredPrescriptions.length === 0 ? (
             <p className="text-gray-500 text-center">
@@ -165,7 +197,7 @@ export const PrescripcionesPendientes = () => {
                         </Button>
                       ) : (
                         <div className="text-sm text-gray-500">
-                          Entregado a {prescription.entregadoPorNombre} ({prescription.entregadoPorRUT})
+                          Entregado a {prescription.entregadoPorNombre || 'N/A'} ({prescription.entregadoPorRUT || 'N/A'})
                         </div>
                       )}
                     </div>
@@ -176,7 +208,6 @@ export const PrescripcionesPendientes = () => {
           )}
         </div>
 
-        {/* Modal de confirmación */}
         {modalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center px-4">
             <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm relative">

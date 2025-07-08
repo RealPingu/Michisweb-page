@@ -21,6 +21,7 @@ export const Login = (): JSX.Element => {
       localStorage.setItem("token", data.token);
 
       const payload = JSON.parse(atob(data.token.split('.')[1]));
+      localStorage.setItem("userId", payload.id)
 
       if (payload.rol === "funcionario") {
         navigate("/funcionario");
