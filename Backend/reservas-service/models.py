@@ -71,6 +71,7 @@ class Medicamento(Base):
     __tablename__ = "medicamento"
 
     id_medicamento = Column(UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()"))
+    dosis_concentracion = Column(String(100))
     nombre = Column(String(100))
 
     #reservas-service

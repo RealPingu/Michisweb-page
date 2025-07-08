@@ -54,18 +54,29 @@ async def crear_reserva(data: ReservaCreate, db: AsyncSession = Depends(get_sess
 # Obtener todas las reservas, ordenadas por fecha, de la más antigua a la más reciente
 @app.get("/reservas")
 async def obtener_reservas(db: AsyncSession = Depends(get_session)):
-    resultado = await db.execute(select(Reserva).options(selectinload(Reserva.medicamentos)).order_by(asc(Reserva.fecha)))
+    resultado = await db.execute(
+        select(Reserva)
+        .options(
+            selectinload(Reserva.paciente),
+            selectinload(Reserva.medicamentos).selectinload(ReservaMedicamento.medicamento)
+        )
+        .order_by(asc(Reserva.fecha))
+    )
     reservas = resultado.scalars().all()
     return [
         {
             "id_reserva": r.id_reserva,
             "id_paciente": r.id_paciente,
+            "nombre_paciente": r.paciente.nombre,
+            "rut_paciente": r.paciente.rut,
             "fecha": r.fecha,
             "estado": r.estado,
             "medicamentos": [
                 {
                     "id_medicamento": rm.id_medicamento,
-                    "cantidad": rm.cantidad
+                    "nombre_medicamento": rm.medicamento.nombre,
+                    "dosis": rm.medicamento.dosis_concentracion,
+                    "cantidad": rm.cantidad,
                 } for rm in r.medicamentos
             ]
         } for r in reservas
