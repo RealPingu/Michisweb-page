@@ -37,37 +37,55 @@ export const Informes = () => {
         const res = await fetch(`http://localhost:8080/medicamentos/principios/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
+        if (!res.ok) throw new Error("No se pudo obtener el principio activo");
+
         const data = await res.json();
         setTitulo({ nombre: data.nombre, categoria: data.categoria });
 
         const loteList: LoteDetalle[] = [];
 
         for (const med of data.medicamentos) {
-          const resLotes = await fetch(
-            `http://localhost:8080/medicamentos/${med.id_medicamento}/lotes`,
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          const lotes = await resLotes.json();
+          try {
+            const resLotes = await fetch(
+              `http://localhost:8080/medicamentos/${med.id_medicamento}/lotes`,
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
 
-          for (const lote of lotes) {
-            loteList.push({
-              lote: lote.lote,
-              fecha_vencimiento: lote.fecha_vencimiento.split("T")[0],
-              cantidad: lote.cantidad,
-              cantidad_defectuosa: lote.cantidad_defectuosa,
-              cantidad_en_idea: lote.cantidad_en_idea,
-              cantidad_en_estado: lote.cantidad_en_estado,
-              cantidad_envase_roto: lote.cantidad_envase_roto,
-              nombre_medicamento: med.nombre,
-              concentracion: med.dosis_concentracion,
-              via_administracion: med.via_administracion,
-            });
+            if (!resLotes.ok) {
+              console.warn(`No se pudo obtener lotes para ${med.nombre}`);
+              continue; // saltamos este medicamento
+            }
+
+            const lotes = await resLotes.json();
+
+            if (!Array.isArray(lotes) || lotes.length === 0) {
+              console.log(`El medicamento ${med.nombre} no tiene lotes`);
+              continue;
+            }
+
+            for (const lote of lotes) {
+              loteList.push({
+                lote: lote.lote,
+                fecha_vencimiento: lote.fecha_vencimiento.split("T")[0],
+                cantidad: lote.cantidad,
+                cantidad_defectuosa: lote.cantidad_defectuosa,
+                cantidad_en_idea: lote.cantidad_en_idea,
+                cantidad_en_estado: lote.cantidad_en_estado,
+                cantidad_envase_roto: lote.cantidad_envase_roto,
+                nombre_medicamento: med.nombre,
+                concentracion: med.dosis_concentracion,
+                via_administracion: med.via_administracion,
+              });
+            }
+          } catch (loteErr) {
+            console.error(`Error cargando lotes para ${med.nombre}`, loteErr);
           }
         }
 
         setLotesDetalle(loteList);
       } catch (error) {
-        console.error("Error cargando informe:", error);
+        console.error("Error cargando informe completo:", error);
       }
     };
 

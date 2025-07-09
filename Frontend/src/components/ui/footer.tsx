@@ -1,4 +1,4 @@
-import { Package, ClipboardList, FileText, ArrowDownCircle, Truck, Calendar } from "lucide-react";
+import { Package, ClipboardList, FileText, ArrowDownCircle, UserPlus, Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const FooterFuncionarioPrescripciones = () => {
@@ -52,6 +52,10 @@ export const FooterMedico = () => {
       <div className="flex flex-col items-center hover:text-black cursor-pointer" onClick={() => navigate("/medico/emitir-recetas")}>
         <FileText className="w-5 h-5" />
         <span>Recetas</span>
+      </div>
+      <div className="flex flex-col items-center hover:text-black cursor-pointer" onClick={() => navigate("/medico/agregar-paciente")}>
+        <UserPlus className="w-5 h-5" />
+        <span>Pacientes</span>
       </div>
     </div>
   );

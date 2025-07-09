@@ -29,21 +29,32 @@ WHERE u.nombre = 'Dr. Juan Pérez' AND t.nombre = 'Turno Mañana' AND b.nombre =
 -- Insertar Principios Activos
 INSERT INTO Principio_activo (nombre, categoria) VALUES
 ('Paracetamol', 'Analgésico'),
-('Amoxicilina', 'Antibiótico');
+('Ibuprofeno', 'Antiinflamatorio'),
+('Amoxicilina', 'Antibiótico'),
+('Omeprazol', 'Inhibidor de bomba de protones');
 
--- Insertar Medicamentos con su código de barras, dosis y vía de administración
+
+-- Insertar Medicamentos
 INSERT INTO Medicamento (nombre, codigo_barras, dosis_concentracion, via_administracion) VALUES
 ('Dolocam', gen_random_uuid(), '500mg', 'Oral'),
-('Amoxil', gen_random_uuid(), '250mg', 'Oral');
+('Ibuflam', gen_random_uuid(), '400mg', 'Oral'),         -- Ibuprofeno
+('Actron', gen_random_uuid(), '600mg', 'Oral'),          -- Ibuprofeno
+('Ibuprofeno Forte', gen_random_uuid(), '800mg', 'Oral'),-- Ibuprofeno
+('Amoxil', gen_random_uuid(), '250mg', 'Oral'),          -- Amoxicilina
+('Amovital', gen_random_uuid(), '500mg', 'Oral'),        -- Amoxicilina
+('Omecaps', gen_random_uuid(), '20mg', 'Oral');          -- Omeprazol
 
 -- Relación Medicamento - Principio activo
 INSERT INTO Medicamento_principio (ID_medicamento, ID_principio)
 SELECT m.ID_medicamento, p.ID_principio
 FROM Medicamento m, Principio_activo p
-WHERE (m.nombre = 'Dolocam' AND p.nombre = 'Paracetamol')
-   OR (m.nombre = 'Amoxil' AND p.nombre = 'Amoxicilina');
+WHERE
+    (m.nombre = 'Dolocam' AND p.nombre = 'Paracetamol') OR
+    (m.nombre IN ('Ibuflam', 'Actron', 'Ibuprofeno Forte') AND p.nombre = 'Ibuprofeno') OR
+    (m.nombre IN ('Amoxil', 'Amovital') AND p.nombre = 'Amoxicilina') OR
+    (m.nombre = 'Omecaps' AND p.nombre = 'Omeprazol');
 
--- Insertar lote para el medicamento Dolocam
+-- Lote para Dolocam
 INSERT INTO Medicamento_lote (
     ID_medicamento, lote, fecha_vencimiento, cantidad, cantidad_reservada,
     cantidad_defectuosa, cantidad_en_idea, cantidad_en_estado, cantidad_envase_roto
@@ -52,6 +63,41 @@ SELECT m.ID_medicamento, 'LOTE-001', '2026-01-01', 100, 5,
        2, 0, 0, 1
 FROM Medicamento m
 WHERE m.nombre = 'Dolocam';
+
+-- Lote para Ibuflam
+INSERT INTO Medicamento_lote (
+    ID_medicamento, lote, fecha_vencimiento, cantidad, cantidad_reservada,
+    cantidad_defectuosa, cantidad_en_idea, cantidad_en_estado, cantidad_envase_roto
+)
+SELECT ID_medicamento, 'IBU-LOT01', '2026-06-30', 150, 10, 2, 0, 0, 1
+FROM Medicamento
+WHERE nombre = 'Ibuflam';
+
+-- Lote para Amovital
+INSERT INTO Medicamento_lote (
+    ID_medicamento, lote, fecha_vencimiento, cantidad, cantidad_reservada,
+    cantidad_defectuosa, cantidad_en_idea, cantidad_en_estado, cantidad_envase_roto
+)
+SELECT ID_medicamento, 'AMO-LOT01', '2025-12-15', 80, 5, 1, 0, 0, 0
+FROM Medicamento
+WHERE nombre = 'Amovital';
+-- Lote 1 para Actron
+INSERT INTO Medicamento_lote (
+    ID_medicamento, lote, fecha_vencimiento, cantidad, cantidad_reservada,
+    cantidad_defectuosa, cantidad_en_idea, cantidad_en_estado, cantidad_envase_roto
+)
+SELECT ID_medicamento, 'ACT-LOT01', '2025-11-30', 120, 8, 1, 0, 0, 0
+FROM Medicamento
+WHERE nombre = 'Actron';
+
+-- Lote 2 para Actron
+INSERT INTO Medicamento_lote (
+    ID_medicamento, lote, fecha_vencimiento, cantidad, cantidad_reservada,
+    cantidad_defectuosa, cantidad_en_idea, cantidad_en_estado, cantidad_envase_roto
+)
+SELECT ID_medicamento, 'ACT-LOT02', '2026-05-20', 200, 15, 3, 0, 0, 1
+FROM Medicamento
+WHERE nombre = 'Actron';
 
 -- Insertar Prescripción
 INSERT INTO Prescripcion (ID_medico, ID_paciente)

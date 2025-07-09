@@ -17,7 +17,6 @@ type PrincipioActivo = {
 };
 
 export const IngresarPrescripcion = (): JSX.Element => {
-  const [nombrePaciente, setNombrePaciente] = useState("");
   const [rutPaciente, setRutPaciente] = useState("");
   const [medicamentos, setMedicamentos] = useState<MedicamentoForm[]>([
     { id_principio: "", duracion: "", frecuencia: "" },
@@ -80,8 +79,8 @@ export const IngresarPrescripcion = (): JSX.Element => {
   };
 
   const handleGuardarPrescripcion = async () => {
-    if (!nombrePaciente.trim() || !rutPaciente.trim()) {
-      setMensajeError("Por favor completa todos los campos del paciente.");
+    if (!rutPaciente.trim()) {
+      setMensajeError("Por favor ingrese el rut del paciente.");
       return;
     }
     for (const med of medicamentos) {
@@ -144,7 +143,6 @@ export const IngresarPrescripcion = (): JSX.Element => {
       setMensajeError("");
       alert("Prescripción creada correctamente.");
       // Limpiar formulario
-      setNombrePaciente("");
       setRutPaciente("");
       setMedicamentos([{ id_principio: "", duracion: "", frecuencia: "" }]);
     } catch (error) {
@@ -171,16 +169,6 @@ export const IngresarPrescripcion = (): JSX.Element => {
           <div className="mb-6">
             <h5 className="text-lg font-medium">Datos del paciente</h5>
             <hr />
-          </div>
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700">Nombre</label>
-            <input
-              type="text"
-              value={nombrePaciente}
-              onChange={(e) => setNombrePaciente(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Ej: Juanito Pérez"
-            />
           </div>
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700">RUT</label>

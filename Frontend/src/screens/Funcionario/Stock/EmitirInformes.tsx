@@ -32,6 +32,7 @@ export const EmitirInformes = (): JSX.Element => {
         });
 
         const principios = await res.json();
+        
 
         const detailed = await Promise.all(
           principios.map(async (principio: any) => {
@@ -50,6 +51,8 @@ export const EmitirInformes = (): JSX.Element => {
               }
 
               const detalle = await detalleRes.json();
+              console.log(`✅ ${principio.nombre}: ${detalle.medicamentos.length} medicamentos`);
+
               let totalStock = 0;
 
               for (const med of detalle.medicamentos) {
@@ -63,14 +66,12 @@ export const EmitirInformes = (): JSX.Element => {
                 );
 
                 if (!lotesRes.ok) {
-                  throw new Error(`Error al obtener lotes de ${med.nombre}`);
+                  console.warn(`⚠️ No se pudo obtener lotes de ${med.nombre}`);
+                  continue;
                 }
 
                 const lotes = await lotesRes.json();
-                const stock = lotes.reduce(
-                  (acc: number, lote: any) => acc + (lote.cantidad || 0),
-                  0
-                );
+                const stock = lotes.reduce((acc: number, lote: any) => acc + (lote.cantidad || 0), 0);
                 totalStock += stock;
               }
 
@@ -82,8 +83,14 @@ export const EmitirInformes = (): JSX.Element => {
                 totalStock,
               };
             } catch (error) {
-              console.error("Error procesando principio activo:", principio.nombre, error);
-              return null;
+              console.error(`❌ Error en ${principio.nombre}:`, error);
+              return {
+                id: principio.id_principio,
+                name: principio.nombre,
+                description: principio.categoria,
+                medicationCount: 0,
+                totalStock: 0,
+              }; // ⚠️ No lo descartes, igual lo mostramos con stock 0
             }
           })
         );

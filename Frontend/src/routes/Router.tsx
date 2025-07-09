@@ -4,6 +4,7 @@ import { MenuFuncionario } from "../screens/Funcionario/Menu";
 import { MenuMedico } from "../screens/Medico/Menu";
 import { RevisarStock } from "../screens/Medico/RevisarStock";
 import { EmitirRecetas } from "../screens/Medico/EmitirRecetas";
+import { AgregarPaciente } from "../screens/Medico/AgregarPaciente";
 import { IngresarPrescripcion } from "../screens/Medico/IngresarPrescripcion";
 import { IngresarMedicamentos } from "../screens/Funcionario/Stock/IngresarMedicamentos";
 import { RegistrarEntrega } from "../screens/Funcionario/Stock/RegistrarEntrega";
@@ -37,4 +38,5 @@ export const Router = createBrowserRouter([
   { path: "/medico/revisar-stock", element: <RevisarStock /> },
   { path: "/medico/emitir-recetas", element: <EmitirRecetas /> },
   { path: "/medico/ingresar-prescripcion", element: <IngresarPrescripcion /> },
+  { path: "/medico/agregar-paciente", element: <AgregarPaciente /> },
 ]);
